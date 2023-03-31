@@ -23,11 +23,11 @@ WITH
       ProductView.unique_product_id,
       ProductMetricsView.customer_id,
       ProductView.target_country,
-      SUM(ProductMetricsView.impressions) AS impressions_30_days,
-      SUM(ProductMetricsView.clicks) AS clicks_30_days,
-      SUM(ProductMetricsView.cost) AS cost_30_days,
-      SUM(ProductMetricsView.conversions) AS conversions_30_days,
-      SUM(ProductMetricsView.conversions_value) AS conversions_value_30_days
+      IFNULL(SUM(ProductMetricsView.impressions), 0) AS impressions_30_days,
+      IFNULL(SUM(ProductMetricsView.clicks), 0) AS clicks_30_days,
+      IFNULL(SUM(ProductMetricsView.cost), 0) AS cost_30_days,
+      IFNULL(SUM(ProductMetricsView.conversions), 0) AS conversions_30_days,
+      IFNULL(SUM(ProductMetricsView.conversions_value), 0) AS conversions_value_30_days
     FROM
       `{project_id}.{dataset}.product_metrics_view_{external_customer_id}` AS ProductMetricsView
     INNER JOIN
