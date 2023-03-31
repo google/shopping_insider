@@ -21,8 +21,9 @@ ads performance.
 
 ## 1. Overview
 
-The Shopping Insider solution is built for Shopping Ads customers to take actionable
-data-driven decisions to improve their feed health and shopping ads performance.
+The Shopping Insider solution is built for Shopping Ads customers to take
+actionable data-driven decisions to improve their feed health and shopping ads
+performance.
 
 ### 1.1. Value Proposition
 
@@ -33,39 +34,51 @@ data-driven decisions to improve their feed health and shopping ads performance.
     performance information pivoted towards custom attributes (product type,
     brand, etc) for deeper insights.
 
-*   Near real-time dashboard to share data and insights across different teams
-    and areas of the business seamlessly to address issues & optimize
-    performance.
+*   A dashboard to share data and insights across different teams and areas of
+    the business seamlessly to address issues & optimize performance.
 
 ### 1.2 Solution Architecture
 
 The solution will export data from GMC and Google Ads to your Google Cloud
-Project on a daily basis and provide insights via Data Studio dashboard.
+Project on a daily basis and provide insights via Looker Studio dashboard.
 
 <img src="images/architecture.png">
 
 ### 1.3 Solution Options
 
-At this time, there are two onboarding options available:
-
 #### Shopping Insider
 
 This is the base solution that exclusively uses the products and product issues
-tables available via the Merchant Center Transfer. This will allow you to set up the
+tables available via the Merchant Center Transfer. This will allow you to set up
+the
 [Shopping Insider Dashboard Template](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview).
 
-#### Shopping Insider + Market Insights
+#### Shopping Insider + Market Insights [Work In Progress]
+
+Prerequisite:
+[Enable Market Insights in your Google Merchant Center](https://support.google.com/merchants/answer/9625913?hl=en)
 
 By enabling Market Insights during the installation process, this will
-additionally configure the Market Insights tables available via the Merchant Center Transfer, Price Benchmarks & Best Sellers, as well as three additional BigQuery views:
+additionally configure the Market Insights tables available via the Merchant
+Center Transfer, Price Benchmarks & Best Sellers, as well as three additional
+BigQuery views:
 
-* `market_insights_snapshot` - a snapshot view that joins the latest product feed data with available price benchmarks, best seller status, and Google Ads performance over the last 30 days.
-* `market_insights_historical` - a date partitioned view that joins the latest product feed data with historical price, price benchmarks, and Google Ads performance over the entire transfer data set.
-* `market_insights_best_sellers` - a view that joins the latest Best Sellers Top Products table with inventory status to show a ranked list of Top Products broken out by category.
-    * Please note: this view is set to only show data for the `en-US` locale. For other locales, you will need to adjust the view's filtering after installation.
+*   `market_insights_snapshot` - a snapshot view that joins the latest product
+    feed data with available price benchmarks, best seller status, and Google
+    Ads performance over the last 30 days.
+*   `market_insights_historical` - a date partitioned view that joins the latest
+    product feed data with historical price, price benchmarks, and Google Ads
+    performance over the entire transfer data set.
+*   `market_insights_best_sellers` - a view that joins the latest Best Sellers
+    Top Products table with inventory status to show a ranked list of Top
+    Products broken out by category.
+    *   Please note: this view is set to only show data for the `en-US` locale.
+        For other locales, you will need to adjust the view's filtering after
+        installation.
 
-With these additional views, you will be able to set up the [Merchant Market Insights Dashboard Template](https://datastudio.google.com/reporting/37411ae9-b5f3-4062-89ea-ea521c885c30/page/QK7kB/preview) in addition to the above Shopping Insider Dashboard template.
-
+With these additional views, you will be able to set up the
+[Merchant Market Insights Dashboard Template](https://datastudio.google.com/reporting/37411ae9-b5f3-4062-89ea-ea521c885c30/page/QK7kB/preview)
+in addition to the above Shopping Insider Dashboard template.
 
 ## 2. Installation
 
@@ -94,23 +107,36 @@ Make sure the user running the installation has following permissions.
 
 *   [Editor(or Owner) Role in Google Cloud Project](https://cloud.google.com/iam/docs/understanding-roles)
 
-### 2.2. Cloud environment setup
+### 2.2. Option 1: Install via Cyborg(Google Sheet)
 
-#### 2.2.1 Setup local environment.
+Speaks to your Google representative to join this
+[Google Group](https://groups.google.com/a/professional-services.goog/g/solutions_shopping_insider-readers)
+to gain access of this
+[Google Sheet](https://docs.google.com/spreadsheets/d/1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas/edit#gid=151491750).
+Follows the instructions in the Google Sheet to complete the installation.
+
+### 2.3. Option 2: Install via Shell Script(command line)
+
+#### 2.3.1 Setup local environment.
+
 [Download and authenticate gcloud.](https://cloud.google.com/sdk/#Quick_Start)
 
-Alternatively, if the GMC account has less than 50 Million products, you could use [Cloud Shell](https://ssh.cloud.google.com/cloudshell?shellonly=true), which comes with gcloud already installed. The cloud shell disconnects after 1 hour and hence we recommend using local environment for large accounts since they could take more than 1 hour to finish the installation.
+Alternatively, if the GMC account has less than 50 Million products, you could
+use [Cloud Shell](https://ssh.cloud.google.com/cloudshell?shellonly=true), which
+comes with gcloud already installed. The cloud shell disconnects after 1 hour
+and hence we recommend using local environment for large accounts since they
+could take more than 1 hour to finish the installation.
 
-#### 2.2.2 Check out source codes
+#### 2.3.2 Check out source codes
 
-Open the [cloud shell](https://ssh.cloud.google.com/cloudshell?shellonly=true) or your terminal(if running locally)
-and clone the repository.
+Open the [cloud shell](https://ssh.cloud.google.com/cloudshell?shellonly=true)
+or your terminal(if running locally) and clone the repository.
 
 ```
-  git clone https://github.com/google/shopping-insider
+  git clone https://github.com/google/shopping_insider
 ```
 
-#### 2.2.3 Run install script
+#### 2.3.3 Run install script
 
 Please provide following inputs when running the `setup.sh` script:
 
@@ -120,7 +146,8 @@ Please provide following inputs when running the `setup.sh` script:
 
 *   [Google Ads External Customer Id](https://support.google.com/google-ads/answer/1704344?hl=en)
 
-*   Market Insights - whether to deploy Market Insights solution. Allowed Values - True or False
+*   Market Insights - whether to deploy Market Insights solution. Allowed
+    Values - True or False
 
 ```
 cd shopping-insider;
@@ -147,32 +174,43 @@ During the installation process, the script will do following:
     near real time.
 
 *   Create following Shopping Insider specific SQL tables.
-    *   product_detailed_materialized - Latest snapshot view of products combined with performance metrics. Each offer is split into rows for each targeted country, rows are keyed by unique_product_id and target_country.
-    *   product_historical_materialized - Historic snapshot of performance metrics at a product category level.
 
-#### 2.2.4 [Optional] Update location and locales if different than US
+    *   product_detailed_materialized - Latest snapshot view of products
+        combined with performance metrics. Each offer is split into rows for
+        each targeted country, rows are keyed by unique_product_id and
+        target_country.
+    *   product_historical_materialized - Historic snapshot of performance
+        metrics at a product category level.
 
-* If your data shouldn't be materialized in US, change the BigQuery dataset location in config.yaml
+#### 2.3.4 [Optional] Update location and locales if different than US
 
-* [Market Insights only] Adjust the locales in best_sellers_workflow.sql, by default set to "en-US"
+*   If your data shouldn't be materialized in US, change the BigQuery dataset
+    location in config.yaml
 
-* You could make the changes before running the install script or after
-    * If you're making the changes afterwards, re-run the install script
-    * Check the scheduled queries in BigQuery and disable any older version of the Main Workflow
+*   [Market Insights only] Adjust the locales in best_sellers_workflow.sql, by
+    default set to "en-US"
 
-## 2.3. Configure Data Sources
+*   You could make the changes before running the install script or after
+
+    *   If you're making the changes afterwards, re-run the install script
+    *   Check the scheduled queries in BigQuery and disable any older version of
+        the Main Workflow
+
+## 2.4. Configure Data Sources
 
 You will need to create or copy required Data Source(s) in Data Studio:
 
 ### For Shopping Insider:
 
-*   Create `product_detailed_materialized` Data Source (linked to `shopping_insider.product_detailed_materialized`)
-*   Create `product_historical_materialized` Data Source (linked to `shopping_insider.product_historical_materialized`)
+*   Create `product_detailed_materialized` Data Source (linked to
+    `shopping_insider.product_detailed_materialized`)
+*   Create `product_historical_materialized` Data Source (linked to
+    `shopping_insider.product_historical_materialized`)
 
 To create a data source:
 
 *   Click on the
-    [link](https://datastudio.google.com/c/u/0/datasources/create?connectorId=2)
+    [link](https://lookerstudio.google.com/c/u/0/datasources/create?connectorId=2)
 
 *   Make sure you are using BigQuery connector. If not choose "`BigQuery`" from
     the list of available connectors.
@@ -188,46 +226,57 @@ To create a data source:
 
 ### For Merchant Market Insights:
 
-*   Copy [Market Insights Snapshot (TEMPLATE)](https://datastudio.google.com/datasources/9dbdb290-0ea6-4d81-90df-5e4f9ec6f504) and connect it to `shopping_insider.market_insights_snapshot_view`
-*   Copy [Market Insights Historical (TEMPLATE)](https://datastudio.google.com/datasources/0397b27f-96b8-44cd-afca-645f64882a26) and connect it to `shopping_insider.market_insights_historical_view`
-*   Copy  [Market Insights Best Sellers (TEMPLATE)](https://datastudio.google.com/datasources/b2f5bafe-01e2-4e30-bfb3-022a6c2f3ad6) and connect it to `shopping_insider.market_insights_best_sellers_materialized`
+*   Copy
+    [Market Insights Snapshot (TEMPLATE)](https://datastudio.google.com/datasources/9dbdb290-0ea6-4d81-90df-5e4f9ec6f504)
+    and connect it to `shopping_insider.market_insights_snapshot_view`
+*   Copy
+    [Market Insights Historical (TEMPLATE)](https://datastudio.google.com/datasources/0397b27f-96b8-44cd-afca-645f64882a26)
+    and connect it to `shopping_insider.market_insights_historical_view`
+*   Copy
+    [Market Insights Best Sellers (TEMPLATE)](https://datastudio.google.com/datasources/b2f5bafe-01e2-4e30-bfb3-022a6c2f3ad6)
+    and connect it to
+    `shopping_insider.market_insights_best_sellers_materialized`
 
 To copy a data source:
 
-*  Click on the data source template link above.
+*   Click on the data source template link above.
 
-*  Click on the  <img src="images/copy_icon.png">  icon in the top right corner next to "Create Report".
+*   Click on the <img src="images/copy_icon.png"> icon in the top right corner
+    next to "Create Report".
 
-*  Click "Copy Data Source" on the "Copy Data Source" pop-up.
+*   Click "Copy Data Source" on the "Copy Data Source" pop-up.
 
-*  Select your Project, Dataset, and Table to be connected, then press "Reconnect" in the top right corner.
+*   Select your Project, Dataset, and Table to be connected, then press
+    "Reconnect" in the top right corner.
 
-*  Click "Apply" on the "Apply Connection Changes" pop-up
+*   Click "Apply" on the "Apply Connection Changes" pop-up
 
-*  Repeat this process for all three data source templates above.
+*   Repeat this process for all three data source templates above.
 
-## 2.4. Create Data-Studio Dashboard(s)
+## 2.5. Create Data-Studio Dashboard(s)
 
 ### For Shopping Insider:
 
 *   Click on the following link to the Data Studio template:
     [link](https://datastudio.google.com/reporting/22c41768-140b-4572-9bf7-4e7e1891a8dd/preview)
 
-*   Click "`Use Template`"
+*   Click "`Use my own data`"
 
-*   Choose the new "`product_detailed_materialized`" and "`product_historical_materialized`" data-sources created in the previous step
+*   Replace data sources by choosing the new "`product_detailed_materialized`"
+    and "`product_historical_materialized`" data-sources created in the previous
+    step
 
-*   Click "`Copy Report`"
+*   Click "`Edit and share`"
 
 ### For Merchant Market Insights:
 
 *   Click on the following link to the Data Studio template:
     [link](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview)
 
-*   Click "`Use Template`"
+*   Click "`Use my own data`"
 
-*   Choose the three data-sources copied in the previous step
+*   Replace data sources with the three data-sources copied in the previous step
 
-*   Click "`Copy Report`"
+*   Click "`Edit and share`"
 
 #### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
