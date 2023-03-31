@@ -138,7 +138,17 @@ WITH
       target_country
   )
 SELECT
-  *,
+  * EXCEPT (
+    impressions_30_days,
+    clicks_30_days,
+    cost_30_days,
+    conversions_30_days,
+    conversions_value_30_days),
+  IFNULL(impressions_30_days, 0) AS impressions_30_days,
+  IFNULL(clicks_30_days, 0) AS clicks_30_days,
+  IFNULL(cost_30_days, 0) AS cost_30_days,
+  IFNULL(conversions_30_days, 0) AS conversions_30_days,
+  IFNULL(conversions_value_30_days, 0) AS conversions_value_30_days,
   CASE
     WHEN is_approved = 1 AND in_stock = 1
       THEN 1
