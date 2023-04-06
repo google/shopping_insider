@@ -51,7 +51,7 @@ Project on a daily basis and provide insights via Looker Studio dashboard.
 This is the base solution that exclusively uses the products and product issues
 tables available via the Merchant Center Transfer. This will allow you to set up
 the
-[Shopping Insider Dashboard Template](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview).
+[Shopping Insider Dashboard Template](https://lookerstudio.google.com/c/u/0/reporting/f1859d41-b693-470c-a404-05c585f51f20/preview).
 
 #### Shopping Insider + Market Insights [Work In Progress]
 
@@ -257,8 +257,8 @@ To copy a data source:
 
 ### For Shopping Insider:
 
-*   Click on the following link to the Data Studio template:
-    [link](https://datastudio.google.com/reporting/22c41768-140b-4572-9bf7-4e7e1891a8dd/preview)
+*   Click on the following link to the Looker Studio template:
+    [link](https://lookerstudio.google.com/c/u/0/reporting/f1859d41-b693-470c-a404-05c585f51f20/preview)
 
 *   Click "`Use my own data`"
 
