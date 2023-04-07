@@ -42,7 +42,7 @@ AS (
         ON
           IdTargetedOffer.merchant_id = ProductView.merchant_id
           AND IdTargetedOffer.target_country = ProductView.target_country
-          AND IdTargetedOffer.offer_id = ProductView.offer_id
+          AND TRIM(LOWER(IdTargetedOffer.offer_id)) = TRIM(LOWER(ProductView.offer_id))
           AND IdTargetedOffer._DATA_DATE = ProductView._DATA_DATE
     ),
     NonIdTargeted AS (
