@@ -10,14 +10,13 @@ ads performance.
 ## Contents
 
 *   [1. Overview](#1-overview)
-    *   [1.1. Value Proposition](#1-1-value-proposition)
-    *   [1.2. Solution Architecture](#solution-architecture)
-    *   [1.3. Solution Options](#solution-options)
+    *   [1.1. Value Proposition](#11-value-proposition)
+    *   [1.2. Solution Architecture](#12-solution-architecture)
+    *   [1.3. Solution Options](#13-solution-options)
 *   [2. Installation](#2-installation)
-    *   [2.1. Environment Setup](#environment-setup)
-    *   [2.2. Cloud Environment Setup](#cloud-environment-setup)
-    *   [2.3. Configure Data Sources](#configure-data-sources)
-    *   [2.4. Create Data-Studio Dashboard](#data-studio-dashboard)
+    *   [2.1. Environment Setup](#21-environment-setup)
+    *   [2.2. Option 1: Install via Cyborg(Google Sheet)](#22-option-1-install-via-cyborggoogle-sheet)
+    *   [2.3. Option 2: Install via Shell Script(command line)](#23-option-2-install-via-shell-scriptcommand-line)
 
 ## 1. Overview
 
@@ -82,7 +81,7 @@ in addition to the above Shopping Insider Dashboard template.
 
 ## 2. Installation
 
-### 2.1. Google Cloud Platform(GCP) setup
+### 2.1. Environment Setup
 
 #### 2.1.1 Create a GCP project with billing account
 
@@ -196,11 +195,11 @@ During the installation process, the script will do following:
     *   Check the scheduled queries in BigQuery and disable any older version of
         the Main Workflow
 
-## 2.4. Configure Data Sources
+#### 2.3.5 Configure Data Sources
 
 You will need to create or copy required Data Source(s) in Data Studio:
 
-### For Shopping Insider:
+##### For Shopping Insider:
 
 *   Create `product_detailed_materialized` Data Source (linked to
     `shopping_insider.product_detailed_materialized`)
@@ -224,7 +223,7 @@ To create a data source:
 *   Click `Connect` on the top right corner and wait for the data-source to be
     created
 
-### For Merchant Market Insights:
+##### For Merchant Market Insights:
 
 *   Copy
     [Market Insights Snapshot (TEMPLATE)](https://datastudio.google.com/datasources/9dbdb290-0ea6-4d81-90df-5e4f9ec6f504)
@@ -253,9 +252,9 @@ To copy a data source:
 
 *   Repeat this process for all three data source templates above.
 
-## 2.5. Create Data-Studio Dashboard(s)
+#### 2.3.6 Create Data-Studio Dashboard(s)
 
-### For Shopping Insider:
+##### For Shopping Insider:
 
 *   Click on the following link to the Looker Studio template:
     [link](https://lookerstudio.google.com/c/u/0/reporting/f1859d41-b693-470c-a404-05c585f51f20/preview)
@@ -268,7 +267,7 @@ To copy a data source:
 
 *   Click "`Edit and share`"
 
-### For Merchant Market Insights:
+##### For Merchant Market Insights:
 
 *   Click on the following link to the Data Studio template:
     [link](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview)
