@@ -70,9 +70,6 @@ AS (
         criterion_row,
         is_negative,
         display_name,
-        sub_criterion,
-        sub_criterion_type,
-        sub_criterion_value,
         MAX(
           IF(
             sub_criterion_type = 'custom0' AND sub_criterion_value <> '*',
@@ -175,7 +172,7 @@ AS (
             NULL)) AS offer_id
       FROM
         FlattenCriteria
-      GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+      GROUP BY 1, 2, 3, 4, 5, 6, 7
     ),
     Merchants AS (
       SELECT DISTINCT
