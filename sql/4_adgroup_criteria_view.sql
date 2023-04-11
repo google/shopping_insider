@@ -75,103 +75,103 @@ AS (
         sub_criterion_value,
         MAX(
           IF(
-            sub_criterion_type = 'custom0',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'custom0' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS custom_label0,
         MAX(
           IF(
-            sub_criterion_type = 'custom1',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'custom1' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS custom_label1,
         MAX(
           IF(
-            sub_criterion_type = 'custom2',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'custom2' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS custom_label2,
         MAX(
           IF(
-            sub_criterion_type = 'custom3',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'custom3' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS custom_label3,
         MAX(
           IF(
-            sub_criterion_type = 'custom4',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'custom4' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS custom_label4,
         MAX(
           IF(
-            sub_criterion_type = 'product_type_l1',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'product_type_l1' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS product_type_l1,
         MAX(
           IF(
-            sub_criterion_type = 'product_type_l2',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'product_type_l2' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS product_type_l2,
         MAX(
           IF(
-            sub_criterion_type = 'product_type_l3',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'product_type_l3' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS product_type_l3,
         MAX(
           IF(
-            sub_criterion_type = 'product_type_l4',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'product_type_l4' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS product_type_l4,
         MAX(
           IF(
-            sub_criterion_type = 'product_type_l5',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'product_type_l5' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS product_type_l5,
         MAX(
           IF(
-            sub_criterion_type = 'category_l1',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'category_l1' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS google_product_category_l1,
         MAX(
           IF(
-            sub_criterion_type = 'category_l2',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'category_l2' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS google_product_category_l2,
         MAX(
           IF(
-            sub_criterion_type = 'category_l3',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'category_l3' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS google_product_category_l3,
         MAX(
           IF(
-            sub_criterion_type = 'category_l4',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'category_l4' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS google_product_category_l4,
         MAX(
           IF(
-            sub_criterion_type = 'category_l5',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'category_l5' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS google_product_category_l5,
         MAX(
           IF(
-            sub_criterion_type = 'channel',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'channel' AND sub_criterion_value <> '*',
+            SPLIT(sub_criterion_value, ':')[SAFE_OFFSET(1)],
             NULL)) AS channel,
         MAX(
           IF(
-            sub_criterion_type = 'channel_exclusivity',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'channel_exclusivity' AND sub_criterion_value <> '*',
+            SPLIT(sub_criterion_value, ':')[SAFE_OFFSET(1)],
             NULL)) AS channel_exclusivity,
         MAX(
           IF(
-            sub_criterion_type = 'c_condition',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'c_condition' AND sub_criterion_value <> '*',
+            SPLIT(sub_criterion_value, ':')[SAFE_OFFSET(1)],
             NULL)) AS condition,
         MAX(
           IF(
-            sub_criterion_type = 'brand',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'brand' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS brand,
         MAX(
           IF(
-            sub_criterion_type = 'id',
-            IF(sub_criterion_value <> '*', sub_criterion_value, NULL),
+            sub_criterion_type = 'id' AND sub_criterion_value <> '*',
+            sub_criterion_value,
             NULL)) AS offer_id
       FROM
         FlattenCriteria
