@@ -45,6 +45,10 @@ Project on a daily basis and provide insights via Looker Studio dashboard.
 
 ### 1.3 Solution Options
 
+Please join this
+[Google Group](https://groups.google.com/g/shopping-insider-public) to gain the
+viewer access for some of the resources below. (i.e. templates, spreadsheets)
+
 #### Shopping Insider
 
 This is the base solution that exclusively uses the products and product issues
@@ -54,30 +58,7 @@ the
 
 #### Shopping Insider + Market Insights [Work In Progress]
 
-Prerequisite:
-[Enable Market Insights in your Google Merchant Center](https://support.google.com/merchants/answer/9625913?hl=en)
-
-By enabling Market Insights during the installation process, this will
-additionally configure the Market Insights tables available via the Merchant
-Center Transfer, Price Benchmarks & Best Sellers, as well as three additional
-BigQuery views:
-
-*   `market_insights_snapshot` - a snapshot view that joins the latest product
-    feed data with available price benchmarks, best seller status, and Google
-    Ads performance over the last 30 days.
-*   `market_insights_historical` - a date partitioned view that joins the latest
-    product feed data with historical price, price benchmarks, and Google Ads
-    performance over the entire transfer data set.
-*   `market_insights_best_sellers` - a view that joins the latest Best Sellers
-    Top Products table with inventory status to show a ranked list of Top
-    Products broken out by category.
-    *   Please note: this view is set to only show data for the `en-US` locale.
-        For other locales, you will need to adjust the view's filtering after
-        installation.
-
-With these additional views, you will be able to set up the
-[Merchant Market Insights Dashboard Template](https://datastudio.google.com/reporting/37411ae9-b5f3-4062-89ea-ea521c885c30/page/QK7kB/preview)
-in addition to the above Shopping Insider Dashboard template.
+Stay tune for the updates!
 
 ## 2. Installation
 
@@ -108,9 +89,7 @@ Make sure the user running the installation has following permissions.
 
 ### 2.2. Option 1: Install via Cyborg(Google Sheet)
 
-Speaks to your Google representative to join this
-[Google Group](https://groups.google.com/a/professional-services.goog/g/solutions_shopping_insider-readers)
-to gain access of this
+Make a copy of this
 [Google Sheet](https://docs.google.com/spreadsheets/d/1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas/edit#gid=151491750).
 Follows the instructions in the Google Sheet to complete the installation.
 
@@ -157,7 +136,7 @@ When installing, the script will check whether the current user has the proper
 authorization to continue. It may ask you to open cloud authorization URL in the
 browser. Please follow the instructions as mentioned in the command line.
 
-#### Note - If the script fails when you run it for the first time, it might be due to delay in preparing Merchant account data. Please wait up to 1-3 days before re-running the script.
+#### Note - If the script fails when you run it for the first time, it might be due to delay in preparing Merchant account data. Usually accounts with massive data set. Please wait up to 1-3 days before re-running the script.
 
 During the installation process, the script will do following:
 
@@ -223,19 +202,6 @@ To create a data source:
 *   Click `Connect` on the top right corner and wait for the data-source to be
     created
 
-##### For Merchant Market Insights:
-
-*   Copy
-    [Market Insights Snapshot (TEMPLATE)](https://datastudio.google.com/datasources/9dbdb290-0ea6-4d81-90df-5e4f9ec6f504)
-    and connect it to `shopping_insider.market_insights_snapshot_view`
-*   Copy
-    [Market Insights Historical (TEMPLATE)](https://datastudio.google.com/datasources/0397b27f-96b8-44cd-afca-645f64882a26)
-    and connect it to `shopping_insider.market_insights_historical_view`
-*   Copy
-    [Market Insights Best Sellers (TEMPLATE)](https://datastudio.google.com/datasources/b2f5bafe-01e2-4e30-bfb3-022a6c2f3ad6)
-    and connect it to
-    `shopping_insider.market_insights_best_sellers_materialized`
-
 To copy a data source:
 
 *   Click on the data source template link above.
@@ -264,17 +230,6 @@ To copy a data source:
 *   Replace data sources by choosing the new "`product_detailed_materialized`"
     and "`product_historical_materialized`" data-sources created in the previous
     step
-
-*   Click "`Edit and share`"
-
-##### For Merchant Market Insights:
-
-*   Click on the following link to the Data Studio template:
-    [link](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview)
-
-*   Click "`Use my own data`"
-
-*   Replace data sources with the three data-sources copied in the previous step
 
 *   Click "`Edit and share`"
 
