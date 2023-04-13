@@ -61,68 +61,90 @@ AS (
           AND Criteria._DATA_DATE = ProductView._DATA_DATE
           AND (
             Criteria.custom_label0 IS NULL
-            OR TRIM(LOWER(Criteria.custom_label0))
-              = TRIM(LOWER(ProductView.custom_labels.label_0)))
+            OR Criteria.custom_label0 = TRIM(LOWER(ProductView.custom_labels.label_0)))
           AND (
             Criteria.custom_label1 IS NULL
-            OR TRIM(LOWER(Criteria.custom_label1))
-              = TRIM(LOWER(ProductView.custom_labels.label_1)))
+            OR Criteria.custom_label1 = TRIM(LOWER(ProductView.custom_labels.label_1)))
           AND (
             Criteria.custom_label2 IS NULL
-            OR TRIM(LOWER(Criteria.custom_label2))
-              = TRIM(LOWER(ProductView.custom_labels.label_2)))
+            OR Criteria.custom_label2 = TRIM(LOWER(ProductView.custom_labels.label_2)))
           AND (
             Criteria.custom_label3 IS NULL
-            OR TRIM(LOWER(Criteria.custom_label3))
-              = TRIM(LOWER(ProductView.custom_labels.label_3)))
+            OR Criteria.custom_label3 = TRIM(LOWER(ProductView.custom_labels.label_3)))
           AND (
             Criteria.custom_label4 IS NULL
-            OR TRIM(LOWER(Criteria.custom_label4))
-              = TRIM(LOWER(ProductView.custom_labels.label_4)))
+            OR Criteria.custom_label4 = TRIM(LOWER(ProductView.custom_labels.label_4)))
           AND (
             Criteria.product_type_l1 IS NULL
-            OR TRIM(LOWER(Criteria.product_type_l1)) = TRIM(LOWER(ProductView.product_type_l1)))
+            OR Criteria.product_type_l1 = TRIM(LOWER(ProductView.product_type_l1)))
           AND (
             Criteria.product_type_l2 IS NULL
-            OR TRIM(LOWER(Criteria.product_type_l2)) = TRIM(LOWER(ProductView.product_type_l2)))
+            OR Criteria.product_type_l2 = TRIM(LOWER(ProductView.product_type_l2)))
           AND (
             Criteria.product_type_l3 IS NULL
-            OR TRIM(LOWER(Criteria.product_type_l3)) = TRIM(LOWER(ProductView.product_type_l3)))
+            OR Criteria.product_type_l3 = TRIM(LOWER(ProductView.product_type_l3)))
           AND (
             Criteria.product_type_l4 IS NULL
-            OR TRIM(LOWER(Criteria.product_type_l4)) = TRIM(LOWER(ProductView.product_type_l4)))
+            OR Criteria.product_type_l4 = TRIM(LOWER(ProductView.product_type_l4)))
           AND (
             Criteria.product_type_l5 IS NULL
-            OR TRIM(LOWER(Criteria.product_type_l5)) = TRIM(LOWER(ProductView.product_type_l5)))
+            OR Criteria.product_type_l5 = TRIM(LOWER(ProductView.product_type_l5)))
           AND (
             Criteria.google_product_category_l1 IS NULL
-            OR TRIM(LOWER(Criteria.google_product_category_l1))
+            OR Criteria.google_product_category_l1
               = TRIM(LOWER(ProductView.google_product_category_l1)))
           AND (
             Criteria.google_product_category_l2 IS NULL
-            OR TRIM(LOWER(Criteria.google_product_category_l2))
+            OR Criteria.google_product_category_l2
               = TRIM(LOWER(ProductView.google_product_category_l2)))
           AND (
             Criteria.google_product_category_l3 IS NULL
-            OR TRIM(LOWER(Criteria.google_product_category_l3))
+            OR Criteria.google_product_category_l3
               = TRIM(LOWER(ProductView.google_product_category_l3)))
           AND (
             Criteria.google_product_category_l4 IS NULL
-            OR TRIM(LOWER(Criteria.google_product_category_l4))
+            OR Criteria.google_product_category_l4
               = TRIM(LOWER(ProductView.google_product_category_l4)))
           AND (
             Criteria.google_product_category_l5 IS NULL
-            OR TRIM(LOWER(Criteria.google_product_category_l5))
+            OR Criteria.google_product_category_l5
               = TRIM(LOWER(ProductView.google_product_category_l5)))
           AND (
             Criteria.brand IS NULL
-            OR TRIM(LOWER(Criteria.brand)) = TRIM(LOWER(ProductView.brand)))
+            OR Criteria.brand = TRIM(LOWER(ProductView.brand)))
           AND (
             Criteria.channel IS NULL
-            OR TRIM(LOWER(Criteria.channel)) = TRIM(LOWER(ProductView.channel)))
+            OR Criteria.channel = TRIM(LOWER(ProductView.channel)))
+          AND (
+            Criteria.channel_exclusivity IS NULL
+            OR Criteria.channel_exclusivity = TRIM(LOWER(ProductView.channel_exclusivity)))
           AND (
             Criteria.condition IS NULL
-            OR TRIM(LOWER(Criteria.condition)) = TRIM(LOWER(ProductView.condition)))
+            OR Criteria.condition = TRIM(LOWER(ProductView.condition)))
+          AND TRIM(LOWER(ProductView.custom_labels.label_0)) NOT IN UNNEST(neg_custom_label0)
+          AND TRIM(LOWER(ProductView.custom_labels.label_1)) NOT IN UNNEST(neg_custom_label1)
+          AND TRIM(LOWER(ProductView.custom_labels.label_2)) NOT IN UNNEST(neg_custom_label2)
+          AND TRIM(LOWER(ProductView.custom_labels.label_3)) NOT IN UNNEST(neg_custom_label3)
+          AND TRIM(LOWER(ProductView.custom_labels.label_4)) NOT IN UNNEST(neg_custom_label4)
+          AND TRIM(LOWER(ProductView.product_type_l1)) NOT IN UNNEST(neg_product_type_l1)
+          AND TRIM(LOWER(ProductView.product_type_l2)) NOT IN UNNEST(neg_product_type_l2)
+          AND TRIM(LOWER(ProductView.product_type_l3)) NOT IN UNNEST(neg_product_type_l3)
+          AND TRIM(LOWER(ProductView.product_type_l4)) NOT IN UNNEST(neg_product_type_l4)
+          AND TRIM(LOWER(ProductView.product_type_l5)) NOT IN UNNEST(neg_product_type_l5)
+          AND TRIM(LOWER(ProductView.google_product_category_l1))
+            NOT IN UNNEST(neg_google_product_category_l1)
+          AND TRIM(LOWER(ProductView.google_product_category_l2))
+            NOT IN UNNEST(neg_google_product_category_l2)
+          AND TRIM(LOWER(ProductView.google_product_category_l3))
+            NOT IN UNNEST(neg_google_product_category_l3)
+          AND TRIM(LOWER(ProductView.google_product_category_l4))
+            NOT IN UNNEST(neg_google_product_category_l4)
+          AND TRIM(LOWER(ProductView.google_product_category_l5))
+            NOT IN UNNEST(neg_google_product_category_l5)
+          AND TRIM(LOWER(ProductView.brand)) NOT IN UNNEST(neg_brand)
+          AND TRIM(LOWER(ProductView.channel)) NOT IN UNNEST(neg_channel)
+          AND TRIM(LOWER(ProductView.channel_exclusivity)) NOT IN UNNEST(neg_channel_exclusivity)
+          AND TRIM(LOWER(ProductView.condition)) NOT IN UNNEST(neg_condition)
       WHERE
         Criteria.offer_id IS NULL
     )

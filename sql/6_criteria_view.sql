@@ -41,7 +41,27 @@ AS (
     channel_exclusivity,
     condition,
     brand,
-    offer_id
+    offer_id,
+    neg_custom_label0,
+    neg_custom_label1,
+    neg_custom_label2,
+    neg_custom_label3,
+    neg_custom_label4,
+    neg_product_type_l1,
+    neg_product_type_l2,
+    neg_product_type_l3,
+    neg_product_type_l4,
+    neg_product_type_l5,
+    neg_google_product_category_l1,
+    neg_google_product_category_l2,
+    neg_google_product_category_l3,
+    neg_google_product_category_l4,
+    neg_google_product_category_l5,
+    neg_channel,
+    neg_channel_exclusivity,
+    neg_condition,
+    neg_brand,
+    neg_offer_id
   FROM
     `{project_id}.{dataset}.adgroup_criteria_view_{external_customer_id}`
   UNION ALL
@@ -70,7 +90,27 @@ AS (
     NULL AS channel_exclusivity,
     condition,
     brand,
-    offer_id
+    offer_id,
+    neg_custom_label0,
+    neg_custom_label1,
+    neg_custom_label2,
+    neg_custom_label3,
+    neg_custom_label4,
+    neg_product_type_l1,
+    neg_product_type_l2,
+    neg_product_type_l3,
+    neg_product_type_l4,
+    neg_product_type_l5,
+    neg_google_product_category_l1,
+    neg_google_product_category_l2,
+    neg_google_product_category_l3,
+    neg_google_product_category_l4,
+    neg_google_product_category_l5,
+    neg_channel,
+    NULL AS neg_channel_exclusivity,
+    neg_condition,
+    neg_brand,
+    neg_offer_id
   FROM
     `{project_id}.{dataset}.pmax_criteria_view_{external_customer_id}`
 );

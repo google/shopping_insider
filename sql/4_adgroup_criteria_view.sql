@@ -58,7 +58,7 @@ AS (
         display_name,
         sub_criterion,
         SPLIT(sub_criterion, '==')[SAFE_OFFSET(0)] AS sub_criterion_type,
-        SPLIT(sub_criterion, '==')[SAFE_OFFSET(1)] AS sub_criterion_value
+        TRIM(LOWER(SPLIT(sub_criterion, '==')[SAFE_OFFSET(1)])) AS sub_criterion_value
       FROM
         Criteria, UNNEST(sub_criteria) AS sub_criterion
     ),
