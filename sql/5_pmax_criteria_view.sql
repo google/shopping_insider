@@ -40,76 +40,142 @@ AS (
         asset_group_listing_group_filter_type,
         IF(
           asset_group_listing_group_filter_case_value_product_custom_attribute_index = 'INDEX0',
-          asset_group_listing_group_filter_case_value_product_custom_attribute_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_custom_attribute_value)),
           NULL) AS custom_label0,
         IF(
           asset_group_listing_group_filter_case_value_product_custom_attribute_index = 'INDEX1',
-          asset_group_listing_group_filter_case_value_product_custom_attribute_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_custom_attribute_value)),
           NULL) AS custom_label1,
         IF(
           asset_group_listing_group_filter_case_value_product_custom_attribute_index = 'INDEX2',
-          asset_group_listing_group_filter_case_value_product_custom_attribute_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_custom_attribute_value)),
           NULL) AS custom_label2,
         IF(
           asset_group_listing_group_filter_case_value_product_custom_attribute_index = 'INDEX3',
-          asset_group_listing_group_filter_case_value_product_custom_attribute_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_custom_attribute_value)),
           NULL) AS custom_label3,
         IF(
           asset_group_listing_group_filter_case_value_product_custom_attribute_index = 'INDEX4',
-          asset_group_listing_group_filter_case_value_product_custom_attribute_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_custom_attribute_value)),
           NULL) AS custom_label4,
         IF(
           asset_group_listing_group_filter_case_value_product_type_level = 'LEVEL1',
-          asset_group_listing_group_filter_case_value_product_type_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l1,
         IF(
           asset_group_listing_group_filter_case_value_product_type_level = 'LEVEL2',
-          asset_group_listing_group_filter_case_value_product_type_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l2,
         IF(
           asset_group_listing_group_filter_case_value_product_type_level = 'LEVEL3',
-          asset_group_listing_group_filter_case_value_product_type_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l3,
         IF(
           asset_group_listing_group_filter_case_value_product_type_level = 'LEVEL4',
-          asset_group_listing_group_filter_case_value_product_type_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l4,
         IF(
           asset_group_listing_group_filter_case_value_product_type_level = 'LEVEL5',
-          asset_group_listing_group_filter_case_value_product_type_value,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l5,
         IF(
           asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL1',
-          asset_group_listing_group_filter_case_value_product_bidding_category_id,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l1,
         IF(
           asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL2',
-          asset_group_listing_group_filter_case_value_product_bidding_category_id,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l2,
         IF(
           asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL3',
-          asset_group_listing_group_filter_case_value_product_bidding_category_id,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l3,
         IF(
           asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL4',
-          asset_group_listing_group_filter_case_value_product_bidding_category_id,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l4,
         IF(
           asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL5',
-          asset_group_listing_group_filter_case_value_product_bidding_category_id,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l5,
         IF(
           asset_group_listing_group_filter_case_value_product_channel_channel != 'UNSPECIFIED',
-          asset_group_listing_group_filter_case_value_product_channel_channel,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_channel_channel)),
           NULL) AS channel,
         IF(
           asset_group_listing_group_filter_case_value_product_condition_condition != 'UNSPECIFIED',
-          asset_group_listing_group_filter_case_value_product_condition_condition,
+          TRIM(LOWER(asset_group_listing_group_filter_case_value_product_condition_condition)),
           NULL) AS condition,
-        asset_group_listing_group_filter_case_value_product_brand_value AS brand,
-        asset_group_listing_group_filter_case_value_product_item_id_value AS offer_id
+        TRIM(LOWER(asset_group_listing_group_filter_case_value_product_brand_value)) AS brand,
+        TRIM(LOWER(asset_group_listing_group_filter_case_value_product_item_id_value)) AS offer_id
       FROM
         `{project_id}.{dataset}.ads_AssetGroupListingGroupFilter_{external_customer_id}`
+    ),
+    AggregatedCriteria AS (
+      SELECT
+        _DATA_DATE,
+        _LATEST_DATE,
+        asset_group_id,
+        parent_listing_group_filter_id,
+        ARRAY_AGG(DISTINCT custom_label0 IGNORE NULLS) AS agg_custom_label0,
+        ARRAY_AGG(DISTINCT custom_label1 IGNORE NULLS) AS agg_custom_label1,
+        ARRAY_AGG(DISTINCT custom_label2 IGNORE NULLS) AS agg_custom_label2,
+        ARRAY_AGG(DISTINCT custom_label3 IGNORE NULLS) AS agg_custom_label3,
+        ARRAY_AGG(DISTINCT custom_label4 IGNORE NULLS) AS agg_custom_label4,
+        ARRAY_AGG(DISTINCT product_type_l1 IGNORE NULLS) AS agg_product_type_l1,
+        ARRAY_AGG(DISTINCT product_type_l2 IGNORE NULLS) AS agg_product_type_l2,
+        ARRAY_AGG(DISTINCT product_type_l3 IGNORE NULLS) AS agg_product_type_l3,
+        ARRAY_AGG(DISTINCT product_type_l4 IGNORE NULLS) AS agg_product_type_l4,
+        ARRAY_AGG(DISTINCT product_type_l5 IGNORE NULLS) AS agg_product_type_l5,
+        ARRAY_AGG(DISTINCT google_product_category_l1 IGNORE NULLS)
+          AS agg_google_product_category_l1,
+        ARRAY_AGG(DISTINCT google_product_category_l2 IGNORE NULLS)
+          AS agg_google_product_category_l2,
+        ARRAY_AGG(DISTINCT google_product_category_l3 IGNORE NULLS)
+          AS agg_google_product_category_l3,
+        ARRAY_AGG(DISTINCT google_product_category_l4 IGNORE NULLS)
+          AS agg_google_product_category_l4,
+        ARRAY_AGG(DISTINCT google_product_category_l5 IGNORE NULLS)
+          AS agg_google_product_category_l5,
+        ARRAY_AGG(DISTINCT channel IGNORE NULLS) AS agg_channel,
+        ARRAY_AGG(DISTINCT condition IGNORE NULLS) AS agg_condition,
+        ARRAY_AGG(DISTINCT brand IGNORE NULLS) AS agg_brand,
+        ARRAY_AGG(DISTINCT offer_id IGNORE NULLS) AS agg_offer_id
+      FROM
+        AssetGroupListingGroupFilters
+      GROUP BY
+        1, 2, 3, 4
+    ),
+    SubdivisionCriteria AS (
+      SELECT
+        AssetGroupListingGroupFilters.listing_group_filter_id,
+        AggregatedCriteria.*
+      FROM
+        AggregatedCriteria
+      INNER JOIN
+        AssetGroupListingGroupFilters
+        USING (_DATA_DATE, _LATEST_DATE, asset_group_id, parent_listing_group_filter_id)
+      WHERE
+        custom_label0 IS NULL
+        AND custom_label1 IS NULL
+        AND custom_label2 IS NULL
+        AND custom_label3 IS NULL
+        AND custom_label4 IS NULL
+        AND product_type_l1 IS NULL
+        AND product_type_l2 IS NULL
+        AND product_type_l3 IS NULL
+        AND product_type_l4 IS NULL
+        AND product_type_l5 IS NULL
+        AND google_product_category_l1 IS NULL
+        AND google_product_category_l2 IS NULL
+        AND google_product_category_l3 IS NULL
+        AND google_product_category_l4 IS NULL
+        AND google_product_category_l5 IS NULL
+        AND channel IS NULL
+        AND condition IS NULL
+        AND brand IS NULL
+        AND offer_id IS NULL
+        AND asset_group_listing_group_filter_type = 'SUBDIVISION'
     ),
     AssetGroups AS (
       SELECT DISTINCT
@@ -169,6 +235,10 @@ AS (
       SELECT
         0 AS index,
         listing_group_filter_id AS leaf_node_listing_group_filter_id,
+        IF(
+          parent_listing_group_filter_id IS NULL,
+          [],
+          [parent_listing_group_filter_id]) AS parent_listing_group_filter_ids,
         *
       FROM FilteredData
       WHERE
@@ -178,41 +248,113 @@ AS (
       SELECT
         Child.index + 1 AS index,
         Child.leaf_node_listing_group_filter_id,
+        ARRAY_CONCAT(
+          IF(
+            Parent.parent_listing_group_filter_id IS NULL,
+            [],
+            [Parent.parent_listing_group_filter_id]),
+          IFNULL(Child.parent_listing_group_filter_ids, [])) AS parent_listing_group_filter_ids,
         Parent.*
       FROM FilteredData AS Parent
       INNER JOIN JoinedData AS Child
         ON
           Child.parent_listing_group_filter_id = Parent.listing_group_filter_id
           AND Child._DATA_DATE = Parent._DATA_DATE
+    ),
+    InclusiveCriteria AS (
+      SELECT
+        _DATA_DATE,
+        _LATEST_DATE,
+        merchant_id,
+        target_country,
+        asset_group_id,
+        campaign_id,
+        leaf_node_listing_group_filter_id,
+        # Unable to do DISTINCT, max 28 Ids (7+6+5+4+3+2+1)
+        ARRAY_CONCAT_AGG(parent_listing_group_filter_ids) AS parent_listing_group_filter_ids,
+        MAX(custom_label0) AS custom_label0,
+        MAX(custom_label1) AS custom_label1,
+        MAX(custom_label2) AS custom_label2,
+        MAX(custom_label3) AS custom_label3,
+        MAX(custom_label4) AS custom_label4,
+        MAX(product_type_l1) AS product_type_l1,
+        MAX(product_type_l2) AS product_type_l2,
+        MAX(product_type_l3) AS product_type_l3,
+        MAX(product_type_l4) AS product_type_l4,
+        MAX(product_type_l5) AS product_type_l5,
+        MAX(google_product_category_l1) AS google_product_category_l1,
+        MAX(google_product_category_l2) AS google_product_category_l2,
+        MAX(google_product_category_l3) AS google_product_category_l3,
+        MAX(google_product_category_l4) AS google_product_category_l4,
+        MAX(google_product_category_l5) AS google_product_category_l5,
+        MAX(channel) AS channel,
+        MAX(condition) AS condition,
+        MAX(brand) AS brand,
+        MAX(offer_id) AS offer_id
+      FROM
+        JoinedData
+      GROUP BY 1, 2, 3, 4, 5, 6, 7
     )
   SELECT
-    _DATA_DATE,
-    _LATEST_DATE,
-    merchant_id,
-    target_country,
-    asset_group_id,
-    campaign_id,
-    leaf_node_listing_group_filter_id,
-    MAX(custom_label0) AS custom_label0,
-    MAX(custom_label1) AS custom_label1,
-    MAX(custom_label2) AS custom_label2,
-    MAX(custom_label3) AS custom_label3,
-    MAX(custom_label4) AS custom_label4,
-    MAX(product_type_l1) AS product_type_l1,
-    MAX(product_type_l2) AS product_type_l2,
-    MAX(product_type_l3) AS product_type_l3,
-    MAX(product_type_l4) AS product_type_l4,
-    MAX(product_type_l5) AS product_type_l5,
-    MAX(google_product_category_l1) AS google_product_category_l1,
-    MAX(google_product_category_l2) AS google_product_category_l2,
-    MAX(google_product_category_l3) AS google_product_category_l3,
-    MAX(google_product_category_l4) AS google_product_category_l4,
-    MAX(google_product_category_l5) AS google_product_category_l5,
-    MAX(channel) AS channel,
-    MAX(condition) AS condition,
-    MAX(brand) AS brand,
-    MAX(offer_id) AS offer_id
+    InclusiveCriteria._DATA_DATE,
+    InclusiveCriteria._LATEST_DATE,
+    InclusiveCriteria.merchant_id,
+    InclusiveCriteria.target_country,
+    InclusiveCriteria.asset_group_id,
+    InclusiveCriteria.campaign_id,
+    InclusiveCriteria.leaf_node_listing_group_filter_id,
+    InclusiveCriteria.custom_label0,
+    InclusiveCriteria.custom_label1,
+    InclusiveCriteria.custom_label2,
+    InclusiveCriteria.custom_label3,
+    InclusiveCriteria.custom_label4,
+    InclusiveCriteria.product_type_l1,
+    InclusiveCriteria.product_type_l2,
+    InclusiveCriteria.product_type_l3,
+    InclusiveCriteria.product_type_l4,
+    InclusiveCriteria.product_type_l5,
+    InclusiveCriteria.google_product_category_l1,
+    InclusiveCriteria.google_product_category_l2,
+    InclusiveCriteria.google_product_category_l3,
+    InclusiveCriteria.google_product_category_l4,
+    InclusiveCriteria.google_product_category_l5,
+    InclusiveCriteria.channel,
+    InclusiveCriteria.condition,
+    InclusiveCriteria.brand,
+    InclusiveCriteria.offer_id,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label0) AS neg_custom_label0,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label1) AS neg_custom_label1,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label2) AS neg_custom_label2,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label3) AS neg_custom_label3,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label4) AS neg_custom_label4,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l1) AS neg_product_type_l1,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l2) AS neg_product_type_l2,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l3) AS neg_product_type_l3,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l4) AS neg_product_type_l4,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l5) AS neg_product_type_l5,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l1)
+      AS neg_google_product_category_l1,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l2)
+      AS neg_google_product_category_l2,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l3)
+      AS neg_google_product_category_l3,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l4)
+      AS neg_google_product_category_l4,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l5)
+      AS neg_google_product_category_l5,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_channel) AS neg_channel,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_condition) AS neg_condition,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_brand) AS neg_brand,
+    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_offer_id) AS neg_offer_id
   FROM
-    JoinedData
-  GROUP BY 1, 2, 3, 4, 5, 6, 7
+    InclusiveCriteria
+  LEFT JOIN
+    SubdivisionCriteria
+    ON
+      SubdivisionCriteria.asset_group_id = InclusiveCriteria.asset_group_id
+      AND SubdivisionCriteria._DATA_DATE = InclusiveCriteria._DATA_DATE
+      AND SubdivisionCriteria.listing_group_filter_id
+        IN UNNEST(InclusiveCriteria.parent_listing_group_filter_ids)
+  GROUP BY
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 );
