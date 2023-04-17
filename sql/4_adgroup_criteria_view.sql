@@ -71,7 +71,11 @@ AS (
         criterion_row,
         is_negative,
         is_criterion_enabled,
-        display_name,
+        display_name AS criteria,
+        LEFT(
+          display_name,
+          IF(INSTR(display_name, '&+', -1, 1) > 0, INSTR(display_name, '&+', -1, 1) - 1, 0))
+          AS parent_criteria,
         MAX(
           IF(
             sub_criterion_type = 'custom0' AND sub_criterion_value <> '*',
@@ -176,13 +180,14 @@ AS (
         FlattenCriteria
       GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
     ),
-    -- This aggregate the criteria to be used for exclusion logic
-    AggregatedCriteria AS (
+    # This aggregate the criteria to be used for exclusion logic
+    ParentCriteria AS (
       SELECT
         _DATA_DATE,
         _LATEST_DATE,
         campaign_id,
         ad_group_id,
+        parent_criteria,
         ARRAY_AGG(DISTINCT custom_label0 IGNORE NULLS) AS agg_custom_label0,
         ARRAY_AGG(DISTINCT custom_label1 IGNORE NULLS) AS agg_custom_label1,
         ARRAY_AGG(DISTINCT custom_label2 IGNORE NULLS) AS agg_custom_label2,
@@ -211,9 +216,111 @@ AS (
       FROM
         PivotedCriteria
       GROUP BY
-        1, 2, 3, 4
+        1, 2, 3, 4, 5
     ),
-    FinalCriteria AS (
+    JoinedExclusionCriteria AS (
+      SELECT
+        PivotedCriteria._DATA_DATE,
+        PivotedCriteria._LATEST_DATE,
+        PivotedCriteria.campaign_id,
+        PivotedCriteria.ad_group_id,
+        PivotedCriteria.criterion_row,
+        PivotedCriteria.is_negative,
+        PivotedCriteria.is_criterion_enabled,
+        PivotedCriteria.criteria,
+        PivotedCriteria.parent_criteria,
+        PivotedCriteria.custom_label0,
+        PivotedCriteria.custom_label1,
+        PivotedCriteria.custom_label2,
+        PivotedCriteria.custom_label3,
+        PivotedCriteria.custom_label4,
+        PivotedCriteria.product_type_l1,
+        PivotedCriteria.product_type_l2,
+        PivotedCriteria.product_type_l3,
+        PivotedCriteria.product_type_l4,
+        PivotedCriteria.product_type_l5,
+        PivotedCriteria.google_product_category_l1,
+        PivotedCriteria.google_product_category_l2,
+        PivotedCriteria.google_product_category_l3,
+        PivotedCriteria.google_product_category_l4,
+        PivotedCriteria.google_product_category_l5,
+        PivotedCriteria.channel,
+        PivotedCriteria.channel_exclusivity,
+        PivotedCriteria.condition,
+        PivotedCriteria.brand,
+        PivotedCriteria.offer_id,
+        IF(CONTAINS_SUBSTR(criteria, 'custom0==*'), ParentCriteria.agg_custom_label0, NULL)
+          AS neg_custom_label0,
+        IF(CONTAINS_SUBSTR(criteria, 'custom1==*'), ParentCriteria.agg_custom_label1, NULL)
+          AS neg_custom_label1,
+        IF(CONTAINS_SUBSTR(criteria, 'custom2==*'), ParentCriteria.agg_custom_label2, NULL)
+          AS neg_custom_label2,
+        IF(CONTAINS_SUBSTR(criteria, 'custom3==*'), ParentCriteria.agg_custom_label3, NULL)
+          AS neg_custom_label3,
+        IF(CONTAINS_SUBSTR(criteria, 'custom4==*'), ParentCriteria.agg_custom_label4, NULL)
+          AS neg_custom_label4,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'product_type_l1==*'), ParentCriteria.agg_product_type_l1, NULL)
+          AS neg_product_type_l1,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'product_type_l2==*'), ParentCriteria.agg_product_type_l2, NULL)
+          AS neg_product_type_l2,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'product_type_l3==*'), ParentCriteria.agg_product_type_l3, NULL)
+          AS neg_product_type_l3,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'product_type_l4==*'), ParentCriteria.agg_product_type_l4, NULL)
+          AS neg_product_type_l4,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'product_type_l5==*'), ParentCriteria.agg_product_type_l5, NULL)
+          AS neg_product_type_l5,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'category_l1==*'),
+          ParentCriteria.agg_google_product_category_l1,
+          NULL)
+          AS neg_google_product_category_l1,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'category_l2==*'),
+          ParentCriteria.agg_google_product_category_l2,
+          NULL)
+          AS neg_google_product_category_l2,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'category_l3==*'),
+          ParentCriteria.agg_google_product_category_l3,
+          NULL)
+          AS neg_google_product_category_l3,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'category_l4==*'),
+          ParentCriteria.agg_google_product_category_l4,
+          NULL)
+          AS neg_google_product_category_l4,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'category_l5==*'),
+          ParentCriteria.agg_google_product_category_l5,
+          NULL)
+          AS neg_google_product_category_l5,
+        IF(CONTAINS_SUBSTR(criteria, 'channel==*'), ParentCriteria.agg_channel, NULL)
+          AS neg_channel,
+        IF(
+          CONTAINS_SUBSTR(criteria, 'channel_exclusivity==*'),
+          ParentCriteria.agg_channel_exclusivity,
+          NULL)
+          AS neg_channel_exclusivity,
+        IF(CONTAINS_SUBSTR(criteria, 'c_condition==*'), ParentCriteria.agg_condition, NULL)
+          AS neg_condition,
+        IF(CONTAINS_SUBSTR(criteria, 'brand==*'), ParentCriteria.agg_brand, NULL) AS neg_brand,
+        IF(CONTAINS_SUBSTR(criteria, 'id==*'), ParentCriteria.agg_offer_id, NULL) AS neg_offer_id
+      FROM
+        ParentCriteria
+      INNER JOIN
+        PivotedCriteria
+        ON
+          ParentCriteria.campaign_id = PivotedCriteria.campaign_id
+          AND ParentCriteria.ad_group_id = PivotedCriteria.ad_group_id
+          AND ParentCriteria._DATA_DATE = PivotedCriteria._DATA_DATE
+          AND INSTR(PivotedCriteria.criteria, ParentCriteria.parent_criteria) > 0
+    ),
+    AggregatedCriteria AS (
       SELECT
         _DATA_DATE,
         _LATEST_DATE,
@@ -222,7 +329,8 @@ AS (
         criterion_row,
         is_negative,
         is_criterion_enabled,
-        display_name,
+        criteria,
+        parent_criteria,
         custom_label0,
         custom_label1,
         custom_label2,
@@ -243,47 +351,37 @@ AS (
         condition,
         brand,
         offer_id,
-        IF(CONTAINS_SUBSTR(display_name, 'custom0==*'), agg_custom_label0, NULL)
-          AS neg_custom_label0,
-        IF(CONTAINS_SUBSTR(display_name, 'custom1==*'), agg_custom_label1, NULL)
-          AS neg_custom_label1,
-        IF(CONTAINS_SUBSTR(display_name, 'custom2==*'), agg_custom_label2, NULL)
-          AS neg_custom_label2,
-        IF(CONTAINS_SUBSTR(display_name, 'custom3==*'), agg_custom_label3, NULL)
-          AS neg_custom_label3,
-        IF(CONTAINS_SUBSTR(display_name, 'custom4==*'), agg_custom_label4, NULL)
-          AS neg_custom_label4,
-        IF(CONTAINS_SUBSTR(display_name, 'product_type_l1==*'), agg_product_type_l1, NULL)
-          AS neg_product_type_l1,
-        IF(CONTAINS_SUBSTR(display_name, 'product_type_l2==*'), agg_product_type_l2, NULL)
-          AS neg_product_type_l2,
-        IF(CONTAINS_SUBSTR(display_name, 'product_type_l3==*'), agg_product_type_l3, NULL)
-          AS neg_product_type_l3,
-        IF(CONTAINS_SUBSTR(display_name, 'product_type_l4==*'), agg_product_type_l4, NULL)
-          AS neg_product_type_l4,
-        IF(CONTAINS_SUBSTR(display_name, 'product_type_l5==*'), agg_product_type_l5, NULL)
-          AS neg_product_type_l5,
-        IF(CONTAINS_SUBSTR(display_name, 'category_l1==*'), agg_google_product_category_l1, NULL)
-          AS neg_google_product_category_l1,
-        IF(CONTAINS_SUBSTR(display_name, 'category_l2==*'), agg_google_product_category_l2, NULL)
-          AS neg_google_product_category_l2,
-        IF(CONTAINS_SUBSTR(display_name, 'category_l3==*'), agg_google_product_category_l3, NULL)
-          AS neg_google_product_category_l3,
-        IF(CONTAINS_SUBSTR(display_name, 'category_l4==*'), agg_google_product_category_l4, NULL)
-          AS neg_google_product_category_l4,
-        IF(CONTAINS_SUBSTR(display_name, 'category_l5==*'), agg_google_product_category_l5, NULL)
-          AS neg_google_product_category_l5,
-        IF(CONTAINS_SUBSTR(display_name, 'channel==*'), agg_channel, NULL) AS neg_channel,
-        IF(CONTAINS_SUBSTR(display_name, 'channel_exclusivity==*'), agg_channel_exclusivity, NULL)
-          AS neg_channel_exclusivity,
-        IF(CONTAINS_SUBSTR(display_name, 'c_condition==*'), agg_condition, NULL) AS neg_condition,
-        IF(CONTAINS_SUBSTR(display_name, 'brand==*'), agg_brand, NULL) AS neg_brand,
-        IF(CONTAINS_SUBSTR(display_name, 'id==*'), agg_offer_id, NULL) AS neg_offer_id
+        ARRAY_CONCAT_AGG(neg_custom_label0) AS neg_custom_label0,
+        ARRAY_CONCAT_AGG(neg_custom_label1) AS neg_custom_label1,
+        ARRAY_CONCAT_AGG(neg_custom_label2) AS neg_custom_label2,
+        ARRAY_CONCAT_AGG(neg_custom_label3) AS neg_custom_label3,
+        ARRAY_CONCAT_AGG(neg_custom_label4) AS neg_custom_label4,
+        ARRAY_CONCAT_AGG(neg_product_type_l1) AS neg_product_type_l1,
+        ARRAY_CONCAT_AGG(neg_product_type_l2) AS neg_product_type_l2,
+        ARRAY_CONCAT_AGG(neg_product_type_l3) AS neg_product_type_l3,
+        ARRAY_CONCAT_AGG(neg_product_type_l4) AS neg_product_type_l4,
+        ARRAY_CONCAT_AGG(neg_product_type_l5) AS neg_product_type_l5,
+        ARRAY_CONCAT_AGG(neg_google_product_category_l1) AS neg_google_product_category_l1,
+        ARRAY_CONCAT_AGG(neg_google_product_category_l2) AS neg_google_product_category_l2,
+        ARRAY_CONCAT_AGG(neg_google_product_category_l3) AS neg_google_product_category_l3,
+        ARRAY_CONCAT_AGG(neg_google_product_category_l4) AS neg_google_product_category_l4,
+        ARRAY_CONCAT_AGG(neg_google_product_category_l5) AS neg_google_product_category_l5,
+        ARRAY_CONCAT_AGG(neg_channel) AS neg_channel,
+        ARRAY_CONCAT_AGG(neg_channel_exclusivity) AS neg_channel_exclusivity,
+        ARRAY_CONCAT_AGG(neg_condition) AS neg_condition,
+        ARRAY_CONCAT_AGG(neg_brand) AS neg_brand,
+        ARRAY_CONCAT_AGG(neg_offer_id) AS neg_offer_id
+      FROM
+        JoinedExclusionCriteria
+      GROUP BY
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+        26, 27, 28, 29
+    ),
+    FinalCriteria AS (
+      SELECT
+        *
       FROM
         AggregatedCriteria
-      INNER JOIN
-        PivotedCriteria
-        USING (campaign_id, ad_group_id, _DATA_DATE, _LATEST_DATE)
       WHERE
         is_negative = FALSE
         AND is_criterion_enabled = TRUE
