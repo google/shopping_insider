@@ -20,18 +20,21 @@
 CREATE OR REPLACE VIEW `{project_id}.{dataset}.adgroup_criteria_view_{external_customer_id}`
 AS (
   WITH
+    # Retrieves the 'ENABLED' & 'SHOPPING' criteria.
     Criteria AS (
       SELECT
         Campaigns._DATA_DATE,
         Campaigns._LATEST_DATE,
         Campaigns.campaign_id,
         AdGroups.ad_group_id,
+        # This column used for troubleshooting only, it act like a unique id for row.
         ROW_NUMBER()
           OVER (PARTITION BY AdGroups.ad_group_id, Campaigns._DATA_DATE) AS criterion_row,
         AdGroupCriteria.ad_group_criterion_negative AS is_negative,
         IF(AdGroupCriteria.ad_group_criterion_status = 'ENABLED', TRUE, FALSE)
           AS is_criterion_enabled,
         AdGroupCriteria.ad_group_criterion_display_name AS display_name,
+        # Split the individual criterion
         SPLIT(AdGroupCriteria.ad_group_criterion_display_name, '&+') AS sub_criteria,
       FROM
         `{project_id}.{dataset}.ads_Campaign_{external_customer_id}` AS Campaigns
@@ -46,6 +49,7 @@ AS (
         AND AdGroups.ad_group_status = 'ENABLED'
         AND AdGroups.ad_group_type IN ('SHOPPING_PRODUCT_ADS', 'SHOPPING_SMART_ADS')
     ),
+    # Unnest the criterion into each row.
     FlattenCriteria AS (
       SELECT
         _DATA_DATE,
@@ -62,6 +66,7 @@ AS (
       FROM
         Criteria, UNNEST(sub_criteria) AS sub_criterion
     ),
+    # Assigns the each criterion into the respective column.
     PivotedCriteria AS (
       SELECT
         _DATA_DATE,
@@ -72,6 +77,8 @@ AS (
         is_negative,
         is_criterion_enabled,
         display_name AS criteria,
+        # Get the parent criteria by removing the last criterion.
+        # Logic: find the position of the last '&+', then keep the LEFT of it.
         LEFT(
           display_name,
           IF(INSTR(display_name, '&+', -1, 1) > 0, INSTR(display_name, '&+', -1, 1) - 1, 0))
@@ -180,7 +187,8 @@ AS (
         FlattenCriteria
       GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
     ),
-    # This aggregate the criteria to be used for exclusion logic
+    # Aggregates the criteria to be used for "Everything else" by grouping the same parent. At this
+    # point, we only know the sibling (same parent), not the grandparent criteria.
     ParentCriteria AS (
       SELECT
         _DATA_DATE,
@@ -218,6 +226,8 @@ AS (
       GROUP BY
         1, 2, 3, 4, 5
     ),
+    # In order to know all ancestors criteria, we do the expansive join by joining all criteria that
+    # matched the parent criteria.
     JoinedExclusionCriteria AS (
       SELECT
         PivotedCriteria._DATA_DATE,
@@ -249,6 +259,8 @@ AS (
         PivotedCriteria.condition,
         PivotedCriteria.brand,
         PivotedCriteria.offer_id,
+        # If 'criterion==*' also imply the 'everything else'. We only add the negative criteria if
+        # 'criterion==*' is found.
         IF(CONTAINS_SUBSTR(criteria, 'custom0==*'), ParentCriteria.agg_custom_label0, NULL)
           AS neg_custom_label0,
         IF(CONTAINS_SUBSTR(criteria, 'custom1==*'), ParentCriteria.agg_custom_label1, NULL)
@@ -318,8 +330,10 @@ AS (
           ParentCriteria.campaign_id = PivotedCriteria.campaign_id
           AND ParentCriteria.ad_group_id = PivotedCriteria.ad_group_id
           AND ParentCriteria._DATA_DATE = PivotedCriteria._DATA_DATE
+          # Find all the ancestors criteria
           AND INSTR(PivotedCriteria.criteria, ParentCriteria.parent_criteria) > 0
     ),
+    # Aggregates and removes the duplicates caused by the expansive join early.
     AggregatedCriteria AS (
       SELECT
         _DATA_DATE,
@@ -377,6 +391,7 @@ AS (
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
         26, 27, 28, 29
     ),
+    # Removes the criteria that is not effectively serving.
     FinalCriteria AS (
       SELECT
         *

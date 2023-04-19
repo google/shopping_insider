@@ -19,7 +19,9 @@
 
 CREATE OR REPLACE VIEW `{project_id}.{dataset}.pmax_criteria_view_{external_customer_id}`
 AS (
+  # Use recursive join to find all the ancestors.
   WITH RECURSIVE
+    # Get all the criteria.
     AssetGroupListingGroupFilters AS (
       SELECT DISTINCT
         _DATA_DATE,
@@ -111,6 +113,8 @@ AS (
       FROM
         `{project_id}.{dataset}.ads_AssetGroupListingGroupFilter_{external_customer_id}`
     ),
+    # Aggregates the criteria to be used for "Everything else" by grouping the same parent. At this
+    # point, we only know the sibling (same parent), not the grandparent criteria.
     AggregatedCriteria AS (
       SELECT
         _DATA_DATE,
@@ -146,6 +150,8 @@ AS (
       GROUP BY
         1, 2, 3, 4
     ),
+    # Unlike the ad group criteria, you do not have '*' to identify 'Everything else'. For pMax,
+    # when everything is NULL, it is 'Everything else'.
     SubdivisionCriteria AS (
       SELECT
         AssetGroupListingGroupFilters.listing_group_filter_id,
@@ -177,6 +183,7 @@ AS (
         AND offer_id IS NULL
         AND asset_group_listing_group_filter_type = 'SUBDIVISION'
     ),
+    # Find the active asset group
     AssetGroups AS (
       SELECT DISTINCT
         _DATA_DATE,
@@ -188,6 +195,7 @@ AS (
       WHERE
         asset_group_status = 'ENABLED'
     ),
+    # Find the active campaign.
     Campaigns AS (
       SELECT DISTINCT
         _DATA_DATE,
@@ -198,6 +206,7 @@ AS (
       WHERE
         campaign_status = 'ENABLED'
     ),
+    # Get merchant id.
     Merchants AS (
       SELECT DISTINCT
         _DATA_DATE,
@@ -219,6 +228,7 @@ AS (
             AS INT64)
           = GeoTargets.parent_id
     ),
+    # Get the active criteria only.
     FilteredData AS (
       SELECT
         *
@@ -230,11 +240,15 @@ AS (
       INNER JOIN AssetGroupListingGroupFilters
         USING (_DATA_DATE, _LATEST_DATE, asset_group_id)
     ),
+    # Join recursively to traverse from the leaf node (the last criterion) to the root (all products).
     JoinedData AS (
       # Get the leaf node of the listing group
       SELECT
+        # This used for troubleshooting purpose only. It is unique id for each row.
         0 AS index,
+        # It is common id for each branch(route).
         listing_group_filter_id AS leaf_node_listing_group_filter_id,
+        # Creates a array to learn all your parents.
         IF(
           parent_listing_group_filter_id IS NULL,
           [],
@@ -242,12 +256,17 @@ AS (
         *
       FROM FilteredData
       WHERE
+        # This will get the leaf node only. The middle layer is 'SUBDIVISION'.
         asset_group_listing_group_filter_type = 'UNIT_INCLUDED'
       UNION ALL
       # Traverse through all rules via parent_listing_group_filter_id
       SELECT
+        # Increases the number by 1, so each row is unique.
         Child.index + 1 AS index,
+        # Retains the leaf node id, so each route is unique(traceable).
         Child.leaf_node_listing_group_filter_id,
+        # Aggregates the parents from the leaf node. So when it reached the root, the root knows all
+        # his descendants.
         ARRAY_CONCAT(
           IF(
             Parent.parent_listing_group_filter_id IS NULL,
@@ -261,6 +280,7 @@ AS (
           Child.parent_listing_group_filter_id = Parent.listing_group_filter_id
           AND Child._DATA_DATE = Parent._DATA_DATE
     ),
+    # Aggregates the inclusive criteria.
     InclusiveCriteria AS (
       SELECT
         _DATA_DATE,
@@ -269,8 +289,10 @@ AS (
         target_country,
         asset_group_id,
         campaign_id,
+        # Each branch is a criteria, aggregates to get all effective criterion.
         leaf_node_listing_group_filter_id,
-        # Unable to do DISTINCT, max 28 Ids (7+6+5+4+3+2+1)
+        # It is a traverse problem, only the root know all. Hence, aggregates them together to know
+        # family tree. Unable to do DISTINCT, max 28 Ids (7+6+5+4+3+2+1)
         ARRAY_CONCAT_AGG(parent_listing_group_filter_ids) AS parent_listing_group_filter_ids,
         MAX(custom_label0) AS custom_label0,
         MAX(custom_label1) AS custom_label1,
@@ -295,6 +317,7 @@ AS (
         JoinedData
       GROUP BY 1, 2, 3, 4, 5, 6, 7
     )
+  # Lastly, add the 'Everything else' array to the table by matching all the parent(SUBDIVISION).
   SELECT
     InclusiveCriteria._DATA_DATE,
     InclusiveCriteria._LATEST_DATE,
