@@ -240,7 +240,7 @@ AS (
       INNER JOIN AssetGroupListingGroupFilters
         USING (_DATA_DATE, _LATEST_DATE, asset_group_id)
     ),
-    # Join recursively to traverse from the leaf node (the last criterion) to the root (all products).
+    # Join recursively to traverse from the leaf node(the last criterion) to the root(all products).
     JoinedData AS (
       # Get the leaf node of the listing group
       SELECT
