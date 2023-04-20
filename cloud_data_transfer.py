@@ -22,6 +22,7 @@ from typing import Any, Dict
 
 import auth
 import config_parser
+import copy
 from google.cloud import bigquery_datatransfer
 from google.protobuf import struct_pb2
 from google.protobuf import timestamp_pb2
@@ -187,16 +188,18 @@ class CloudDataTransferUtils(object):
           'The data transfer config "%s" parameters match. Hence '
           'skipping update.', transfer_config.display_name)
       return transfer_config
-    new_transfer_config = bigquery_datatransfer.TransferConfig()
-    new_transfer_config.CopyFrom(transfer_config)
+    new_transfer_config = copy.deepcopy(transfer_config)
     # Clear existing parameter values.
-    new_transfer_config.params.Clear()
+    new_transfer_config.params = {}
     for key, value in params.items():
       new_transfer_config.params[key] = value
     # Only params field is updated.
     update_mask = {'paths': ['params']}
-    new_transfer_config = self.client.update_transfer_config(
-        new_transfer_config, update_mask)
+    request = bigquery_datatransfer.UpdateTransferConfigRequest(
+        transfer_config=new_transfer_config,
+        update_mask=update_mask
+    )
+    new_transfer_config = self.client.update_transfer_config(request)
     logging.info('The data transfer config "%s" parameters updated.',
                  new_transfer_config.display_name)
     return new_transfer_config
