@@ -233,8 +233,6 @@ AS (
       SELECT
         *
       FROM Campaigns
-      INNER JOIN Merchants
-        USING (_DATA_DATE, _LATEST_DATE, campaign_id)
       INNER JOIN AssetGroups
         USING (_DATA_DATE, _LATEST_DATE, campaign_id)
       INNER JOIN AssetGroupListingGroupFilters
@@ -248,11 +246,6 @@ AS (
         0 AS index,
         # It is common id for each branch(route).
         listing_group_filter_id AS leaf_node_listing_group_filter_id,
-        # Creates a array to learn all your parents.
-        IF(
-          parent_listing_group_filter_id IS NULL,
-          [],
-          [parent_listing_group_filter_id]) AS parent_listing_group_filter_ids,
         *
       FROM FilteredData
       WHERE
@@ -265,14 +258,6 @@ AS (
         Child.index + 1 AS index,
         # Retains the leaf node id, so each route is unique(traceable).
         Child.leaf_node_listing_group_filter_id,
-        # Aggregates the parents from the leaf node. So when it reached the root, the root knows all
-        # his descendants.
-        ARRAY_CONCAT(
-          IF(
-            Parent.parent_listing_group_filter_id IS NULL,
-            [],
-            [Parent.parent_listing_group_filter_id]),
-          IFNULL(Child.parent_listing_group_filter_ids, [])) AS parent_listing_group_filter_ids,
         Parent.*
       FROM FilteredData AS Parent
       INNER JOIN JoinedData AS Child
@@ -285,15 +270,12 @@ AS (
       SELECT
         _DATA_DATE,
         _LATEST_DATE,
-        merchant_id,
-        target_country,
         asset_group_id,
         campaign_id,
         # Each branch is a criteria, aggregates to get all effective criterion.
         leaf_node_listing_group_filter_id,
-        # It is a traverse problem, only the root know all. Hence, aggregates them together to know
-        # family tree. Unable to do DISTINCT, max 28 Ids (7+6+5+4+3+2+1)
-        ARRAY_CONCAT_AGG(parent_listing_group_filter_ids) AS parent_listing_group_filter_ids,
+        # Aggregates the parent ids to find the family tree
+        ARRAY_AGG(IFNULL(parent_listing_group_filter_id, 0)) AS parent_listing_group_filter_ids,
         MAX(custom_label0) AS custom_label0,
         MAX(custom_label1) AS custom_label1,
         MAX(custom_label2) AS custom_label2,
@@ -315,69 +297,74 @@ AS (
         MAX(offer_id) AS offer_id
       FROM
         JoinedData
-      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      GROUP BY 1, 2, 3, 4, 5
+    ),
+    # Lastly, add the 'Everything else' array to the table by matching all the parent(SUBDIVISION).
+    Criteria AS (
+      SELECT
+        InclusiveCriteria._DATA_DATE,
+        InclusiveCriteria._LATEST_DATE,
+        InclusiveCriteria.asset_group_id,
+        InclusiveCriteria.campaign_id,
+        InclusiveCriteria.leaf_node_listing_group_filter_id,
+        InclusiveCriteria.custom_label0,
+        InclusiveCriteria.custom_label1,
+        InclusiveCriteria.custom_label2,
+        InclusiveCriteria.custom_label3,
+        InclusiveCriteria.custom_label4,
+        InclusiveCriteria.product_type_l1,
+        InclusiveCriteria.product_type_l2,
+        InclusiveCriteria.product_type_l3,
+        InclusiveCriteria.product_type_l4,
+        InclusiveCriteria.product_type_l5,
+        InclusiveCriteria.google_product_category_l1,
+        InclusiveCriteria.google_product_category_l2,
+        InclusiveCriteria.google_product_category_l3,
+        InclusiveCriteria.google_product_category_l4,
+        InclusiveCriteria.google_product_category_l5,
+        InclusiveCriteria.channel,
+        InclusiveCriteria.condition,
+        InclusiveCriteria.brand,
+        InclusiveCriteria.offer_id,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label0) AS neg_custom_label0,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label1) AS neg_custom_label1,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label2) AS neg_custom_label2,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label3) AS neg_custom_label3,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label4) AS neg_custom_label4,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l1) AS neg_product_type_l1,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l2) AS neg_product_type_l2,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l3) AS neg_product_type_l3,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l4) AS neg_product_type_l4,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l5) AS neg_product_type_l5,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l1)
+          AS neg_google_product_category_l1,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l2)
+          AS neg_google_product_category_l2,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l3)
+          AS neg_google_product_category_l3,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l4)
+          AS neg_google_product_category_l4,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l5)
+          AS neg_google_product_category_l5,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_channel) AS neg_channel,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_condition) AS neg_condition,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_brand) AS neg_brand,
+        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_offer_id) AS neg_offer_id
+      FROM
+        InclusiveCriteria
+      LEFT JOIN
+        SubdivisionCriteria
+        ON
+          SubdivisionCriteria.asset_group_id = InclusiveCriteria.asset_group_id
+          AND SubdivisionCriteria._DATA_DATE = InclusiveCriteria._DATA_DATE
+          AND SubdivisionCriteria.listing_group_filter_id
+            IN UNNEST(InclusiveCriteria.parent_listing_group_filter_ids)
+      GROUP BY
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
     )
-  # Lastly, add the 'Everything else' array to the table by matching all the parent(SUBDIVISION).
   SELECT
-    InclusiveCriteria._DATA_DATE,
-    InclusiveCriteria._LATEST_DATE,
-    InclusiveCriteria.merchant_id,
-    InclusiveCriteria.target_country,
-    InclusiveCriteria.asset_group_id,
-    InclusiveCriteria.campaign_id,
-    InclusiveCriteria.leaf_node_listing_group_filter_id,
-    InclusiveCriteria.custom_label0,
-    InclusiveCriteria.custom_label1,
-    InclusiveCriteria.custom_label2,
-    InclusiveCriteria.custom_label3,
-    InclusiveCriteria.custom_label4,
-    InclusiveCriteria.product_type_l1,
-    InclusiveCriteria.product_type_l2,
-    InclusiveCriteria.product_type_l3,
-    InclusiveCriteria.product_type_l4,
-    InclusiveCriteria.product_type_l5,
-    InclusiveCriteria.google_product_category_l1,
-    InclusiveCriteria.google_product_category_l2,
-    InclusiveCriteria.google_product_category_l3,
-    InclusiveCriteria.google_product_category_l4,
-    InclusiveCriteria.google_product_category_l5,
-    InclusiveCriteria.channel,
-    InclusiveCriteria.condition,
-    InclusiveCriteria.brand,
-    InclusiveCriteria.offer_id,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label0) AS neg_custom_label0,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label1) AS neg_custom_label1,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label2) AS neg_custom_label2,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label3) AS neg_custom_label3,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label4) AS neg_custom_label4,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l1) AS neg_product_type_l1,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l2) AS neg_product_type_l2,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l3) AS neg_product_type_l3,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l4) AS neg_product_type_l4,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l5) AS neg_product_type_l5,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l1)
-      AS neg_google_product_category_l1,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l2)
-      AS neg_google_product_category_l2,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l3)
-      AS neg_google_product_category_l3,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l4)
-      AS neg_google_product_category_l4,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l5)
-      AS neg_google_product_category_l5,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_channel) AS neg_channel,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_condition) AS neg_condition,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_brand) AS neg_brand,
-    ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_offer_id) AS neg_offer_id
-  FROM
-    InclusiveCriteria
-  LEFT JOIN
-    SubdivisionCriteria
-    ON
-      SubdivisionCriteria.asset_group_id = InclusiveCriteria.asset_group_id
-      AND SubdivisionCriteria._DATA_DATE = InclusiveCriteria._DATA_DATE
-      AND SubdivisionCriteria.listing_group_filter_id
-        IN UNNEST(InclusiveCriteria.parent_listing_group_filter_ids)
-  GROUP BY
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+    *
+  FROM Criteria
+  INNER JOIN Merchants
+    USING (_DATA_DATE, _LATEST_DATE, campaign_id)
 );
