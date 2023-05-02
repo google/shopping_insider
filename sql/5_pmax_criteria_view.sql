@@ -150,39 +150,6 @@ AS (
       GROUP BY
         1, 2, 3, 4
     ),
-    # Unlike the ad group criteria, you do not have '*' to identify 'Everything else'. For pMax,
-    # when everything is NULL, it is 'Everything else'.
-    SubdivisionCriteria AS (
-      SELECT
-        AssetGroupListingGroupFilters.listing_group_filter_id,
-        AggregatedCriteria.*
-      FROM
-        AggregatedCriteria
-      INNER JOIN
-        AssetGroupListingGroupFilters
-        USING (_DATA_DATE, _LATEST_DATE, asset_group_id, parent_listing_group_filter_id)
-      WHERE
-        custom_label0 IS NULL
-        AND custom_label1 IS NULL
-        AND custom_label2 IS NULL
-        AND custom_label3 IS NULL
-        AND custom_label4 IS NULL
-        AND product_type_l1 IS NULL
-        AND product_type_l2 IS NULL
-        AND product_type_l3 IS NULL
-        AND product_type_l4 IS NULL
-        AND product_type_l5 IS NULL
-        AND google_product_category_l1 IS NULL
-        AND google_product_category_l2 IS NULL
-        AND google_product_category_l3 IS NULL
-        AND google_product_category_l4 IS NULL
-        AND google_product_category_l5 IS NULL
-        AND channel IS NULL
-        AND condition IS NULL
-        AND brand IS NULL
-        AND offer_id IS NULL
-        AND asset_group_listing_group_filter_type = 'SUBDIVISION'
-    ),
     # Find the active asset group
     AssetGroups AS (
       SELECT DISTINCT
@@ -326,38 +293,63 @@ AS (
         InclusiveCriteria.condition,
         InclusiveCriteria.brand,
         InclusiveCriteria.offer_id,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label0) AS neg_custom_label0,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label1) AS neg_custom_label1,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label2) AS neg_custom_label2,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label3) AS neg_custom_label3,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_custom_label4) AS neg_custom_label4,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l1) AS neg_product_type_l1,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l2) AS neg_product_type_l2,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l3) AS neg_product_type_l3,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l4) AS neg_product_type_l4,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_product_type_l5) AS neg_product_type_l5,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l1)
+        ANY_VALUE(IF(custom_label0 IS NULL, AggregatedCriteria.agg_custom_label0, []))
+          AS neg_custom_label0,
+        ANY_VALUE(IF(custom_label1 IS NULL, AggregatedCriteria.agg_custom_label1, []))
+          AS neg_custom_label1,
+        ANY_VALUE(IF(custom_label2 IS NULL, AggregatedCriteria.agg_custom_label2, []))
+          AS neg_custom_label2,
+        ANY_VALUE(IF(custom_label3 IS NULL, AggregatedCriteria.agg_custom_label3, []))
+          AS neg_custom_label3,
+        ANY_VALUE(IF(custom_label4 IS NULL, AggregatedCriteria.agg_custom_label4, []))
+          AS neg_custom_label4,
+        ANY_VALUE(IF(product_type_l1 IS NULL, AggregatedCriteria.agg_product_type_l1, []))
+          AS neg_product_type_l1,
+        ANY_VALUE(IF(product_type_l2 IS NULL, AggregatedCriteria.agg_product_type_l2, []))
+          AS neg_product_type_l2,
+        ANY_VALUE(IF(product_type_l3 IS NULL, AggregatedCriteria.agg_product_type_l3, []))
+          AS neg_product_type_l3,
+        ANY_VALUE(IF(product_type_l4 IS NULL, AggregatedCriteria.agg_product_type_l4, []))
+          AS neg_product_type_l4,
+        ANY_VALUE(IF(product_type_l5 IS NULL, AggregatedCriteria.agg_product_type_l5, []))
+          AS neg_product_type_l5,
+        ANY_VALUE(
+          IF(
+            google_product_category_l1 IS NULL,
+            AggregatedCriteria.agg_google_product_category_l1, []))
           AS neg_google_product_category_l1,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l2)
+        ANY_VALUE(
+          IF(
+            google_product_category_l2 IS NULL,
+            AggregatedCriteria.agg_google_product_category_l2, []))
           AS neg_google_product_category_l2,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l3)
+        ANY_VALUE(
+          IF(
+            google_product_category_l3 IS NULL,
+            AggregatedCriteria.agg_google_product_category_l3, []))
           AS neg_google_product_category_l3,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l4)
+        ANY_VALUE(
+          IF(
+            google_product_category_l4 IS NULL,
+            AggregatedCriteria.agg_google_product_category_l4, []))
           AS neg_google_product_category_l4,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_google_product_category_l5)
+        ANY_VALUE(
+          IF(
+            google_product_category_l5 IS NULL,
+            AggregatedCriteria.agg_google_product_category_l5, []))
           AS neg_google_product_category_l5,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_channel) AS neg_channel,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_condition) AS neg_condition,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_brand) AS neg_brand,
-        ARRAY_CONCAT_AGG(SubdivisionCriteria.agg_offer_id) AS neg_offer_id
+        ANY_VALUE(IF(channel IS NULL, AggregatedCriteria.agg_channel, [])) AS neg_channel,
+        ANY_VALUE(IF(condition IS NULL, AggregatedCriteria.agg_condition, [])) AS neg_condition,
+        ANY_VALUE(IF(brand IS NULL, AggregatedCriteria.agg_brand, [])) AS neg_brand,
+        ANY_VALUE(IF(offer_id IS NULL, AggregatedCriteria.agg_offer_id, [])) AS neg_offer_id
       FROM
         InclusiveCriteria
       LEFT JOIN
-        SubdivisionCriteria
+        AggregatedCriteria
         ON
-          SubdivisionCriteria.asset_group_id = InclusiveCriteria.asset_group_id
-          AND SubdivisionCriteria._DATA_DATE = InclusiveCriteria._DATA_DATE
-          AND SubdivisionCriteria.listing_group_filter_id
+          AggregatedCriteria.asset_group_id = InclusiveCriteria.asset_group_id
+          AND AggregatedCriteria._DATA_DATE = InclusiveCriteria._DATA_DATE
+          AND AggregatedCriteria.parent_listing_group_filter_id
             IN UNNEST(InclusiveCriteria.parent_listing_group_filter_ids)
       GROUP BY
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
