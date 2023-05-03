@@ -87,7 +87,8 @@ def parse_arguments() -> argparse.Namespace:
       '--market_insights',
       help='Deploy Market Insights solution.',
       type=parse_boolean,
-      required=True)
+      default=False,
+      required=False)
   return parser.parse_args()
 
 

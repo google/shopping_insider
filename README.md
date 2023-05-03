@@ -129,7 +129,7 @@ Please provide following inputs when running the `setup.sh` script:
 
 ```
 cd shopping-insider;
-sh setup.sh --project_id=<project_id> --merchant_id=<merchant_id> --ads_customer_id=<ads_customer_id> --market_insights=False
+sh setup.sh --project_id=<project_id> --merchant_id=<merchant_id> --ads_customer_id=<ads_customer_id>
 ```
 
 When installing, the script will check whether the current user has the proper
