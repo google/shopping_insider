@@ -316,28 +316,28 @@ AS (
         ANY_VALUE(
           IF(
             google_product_category_l1 IS NULL,
-            AggregatedCriteria.agg_google_product_category_l1, []))
-          AS neg_google_product_category_l1,
+            AggregatedCriteria.agg_google_product_category_l1,
+            [])) AS neg_google_product_category_l1,
         ANY_VALUE(
           IF(
             google_product_category_l2 IS NULL,
-            AggregatedCriteria.agg_google_product_category_l2, []))
-          AS neg_google_product_category_l2,
+            AggregatedCriteria.agg_google_product_category_l2,
+            [])) AS neg_google_product_category_l2,
         ANY_VALUE(
           IF(
             google_product_category_l3 IS NULL,
-            AggregatedCriteria.agg_google_product_category_l3, []))
-          AS neg_google_product_category_l3,
+            AggregatedCriteria.agg_google_product_category_l3,
+            [])) AS neg_google_product_category_l3,
         ANY_VALUE(
           IF(
             google_product_category_l4 IS NULL,
-            AggregatedCriteria.agg_google_product_category_l4, []))
-          AS neg_google_product_category_l4,
+            AggregatedCriteria.agg_google_product_category_l4,
+            [])) AS neg_google_product_category_l4,
         ANY_VALUE(
           IF(
             google_product_category_l5 IS NULL,
-            AggregatedCriteria.agg_google_product_category_l5, []))
-          AS neg_google_product_category_l5,
+            AggregatedCriteria.agg_google_product_category_l5,
+            [])) AS neg_google_product_category_l5,
         ANY_VALUE(IF(channel IS NULL, AggregatedCriteria.agg_channel, [])) AS neg_channel,
         ANY_VALUE(IF(condition IS NULL, AggregatedCriteria.agg_condition, [])) AS neg_condition,
         ANY_VALUE(IF(brand IS NULL, AggregatedCriteria.agg_brand, [])) AS neg_brand,
