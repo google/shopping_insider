@@ -1,0 +1,7 @@
+google-cloud-bigquery
+google-api-python-client
+google-cloud-bigquery-datatransfer
+grpcio
+grpcio-tools
+PyYAML
+pytz

@@ -17,7 +17,7 @@
 
 set -e
 
-VIRTUALENV_PATH=$HOME/"markup-venv"
+VIRTUALENV_PATH=$HOME/"shopping_insider_venv"
 
 # Create virtual environment with python3
 if [[ ! -d "${VIRTUALENV_PATH}" ]]; then
@@ -26,10 +26,10 @@ fi
 
 
 # Activate virtual environment.
-source ~/markup-venv/bin/activate
+source ${VIRTUALENV_PATH}/bin/activate
 
 # Install dependencies.
-pip install -r requirements.txt
+pip install --require-hashes -r requirements.txt
 
 # Setup cloud environment.
 PYTHONPATH=src/plugins:$PYTHONPATH
