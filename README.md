@@ -17,6 +17,7 @@ ads performance.
     *   [2.1. Environment Setup](#21-environment-setup)
     *   [2.2. Option 1: Install via Cyborg(Google Sheet)](#22-option-1-install-via-cyborggoogle-sheet)
     *   [2.3. Option 2: Install via Shell Script(command line)](#23-option-2-install-via-shell-scriptcommand-line)
+    *   [2.4. Multi-Client Account(MCA) support](#24-multi-client-accountmca-support)
 
 ## 1. Overview
 
@@ -234,3 +235,47 @@ To copy a data source:
 *   Click "`Edit and share`"
 
 #### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
+
+### 2.4. Multi-Client Account(MCA) support
+
+1.  If you have more than one Google Merchant Center, repeat the installation
+    for all MCA.
+
+1.  Creates a data set in Big Query
+    ([Guide](https://cloud.google.com/bigquery/docs/datasets#create-dataset)).
+
+1.  Creates the views to union all the data set from step 1.
+
+    ```
+    CREATE OR REPLACE VIEW `<project_id>.<final_dataset>.product_detailed_materialized`
+    AS (
+      SELECT
+        *
+      FROM
+        `<project_id>.<dataset_1>.product_detailed_materialized`
+      UNION ALL
+      SELECT
+        *
+      FROM
+        `<project_id>.<dataset_2>.product_detailed_materialized`
+      ......
+    );
+    ```
+
+    ```
+    CREATE OR REPLACE VIEW `<project_id>.<final_dataset>.product_historical_materialized`
+    AS (
+      SELECT
+        *
+      FROM
+        `<project_id>.<dataset_1>.product_historical_materialized`
+      UNION ALL
+      SELECT
+        *
+      FROM
+        `<project_id>.<dataset_2>.product_historical_materialized`
+      ......
+    );
+    ```
+
+1.  Replaces the dashboard data sources with the views.
