@@ -108,7 +108,14 @@ WITH
       ANY_VALUE(sale_price) AS sale_price,
       MAX(sale_price_effective_start_date) AS sale_price_effective_start_date,
       MAX(sale_price_effective_end_date) AS sale_price_effective_end_date,
-      ANY_VALUE(additional_product_types) AS additional_product_types
+      ANY_VALUE(additional_product_types) AS additional_product_types,
+      DATE_DIFF(
+        DATE(
+          LEAST(
+            MAX(COALESCE(expiration_date, google_expiration_date)),
+            MAX(google_expiration_date))),
+        ProductView._DATA_DATE,
+        DAY) AS days_until_expiration
     FROM
       `{project_id}.{dataset}.product_view_{merchant_id}` AS ProductView
     LEFT JOIN
