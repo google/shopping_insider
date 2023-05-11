@@ -1,0 +1,9 @@
+{
+  "shopping": {
+    "source": "./shopping-insider",
+    "env": {
+      "dev": "[YOUR_APPS_SCRIPT_ID]",
+      "test": "[YOUR_APPS_SCRIPT_ID]"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "shopping_insider",
+  "version": "0.0.1",
+  "description": "Google Sheets based installer for Shopping Insider",
+  "author": "Google Inc.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/google/shopping_insider"
+  },
+  "homepage": "https://github.com/google/shopping_insider/README.md",
+  "dependencies": {
+    "@google-cloud/sheets-based-installer": "^0.1.0"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.4.2",
+    "jasmine": "^4.4.0"
+  },
+  "scripts": {
+    "deploy": "node node_modules/@google-cloud/sheets-based-installer/bin/deploy",
+    "postdeploy": "clasp push -f -P dest/apps_script"
+  },
+  "cloud-repo-tools": {
+    "requiresKeyFile": true,
+    "requiresProjectId": true
+  }
+}
