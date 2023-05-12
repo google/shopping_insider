@@ -183,6 +183,7 @@ def get_best_sellers_workflow_sql(project_id: str, dataset_id: str,
   query_params = {
       'project_id': project_id,
       'dataset': dataset_id,
-      'merchant_id': merchant_id
+      'merchant_id': merchant_id,
+      'market_insights_locale': config_parser.get_market_insights_locale()
   }
   return configure_sql(_BEST_SELLERS_WORKFLOW_SQL, query_params)

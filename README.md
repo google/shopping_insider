@@ -166,7 +166,7 @@ During the installation process, the script will do following:
 *   If your data shouldn't be materialized in US, change the BigQuery dataset
     location in config.yaml
 
-*   [Market Insights only] Adjust the locales in best_sellers_workflow.sql, by
+*   [Market Insights only] Adjust the locales by changing ```MARKET_INSIGHTS_LOCALE``` in config.yaml, by
     default set to "en-US"
 
 *   You could make the changes before running the install script or after

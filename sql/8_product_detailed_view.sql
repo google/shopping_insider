@@ -46,7 +46,7 @@ WITH
   ProductData AS (
     SELECT
       ProductView._DATA_DATE,
-      ProductView._LATEST_DATE,
+      ProductView._LATEST_DATE as latest_date,
       COALESCE(ProductView.aggregator_id, ProductView.merchant_id) AS account_id,
       MAX(customer_view.customer_descriptive_name) AS account_display_name,
       ProductView.merchant_id AS sub_account_id,
@@ -138,7 +138,7 @@ WITH
         AND TargetedProduct.target_country = ProductView.target_country
     GROUP BY
       _DATA_DATE,
-      _LATEST_DATE,
+      latest_date,
       account_id,
       ProductView.merchant_id,
       ProductView.unique_product_id,
