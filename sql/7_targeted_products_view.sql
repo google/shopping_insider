@@ -121,48 +121,92 @@ AS (
           AND (
             Criteria.condition IS NULL
             OR Criteria.condition = TRIM(LOWER(ProductView.condition)))
-          AND TRIM(LOWER(ProductView.custom_labels.label_0)) NOT IN UNNEST(neg_custom_label0)
-          AND TRIM(LOWER(ProductView.custom_labels.label_1)) NOT IN UNNEST(neg_custom_label1)
-          AND TRIM(LOWER(ProductView.custom_labels.label_2)) NOT IN UNNEST(neg_custom_label2)
-          AND TRIM(LOWER(ProductView.custom_labels.label_3)) NOT IN UNNEST(neg_custom_label3)
-          AND TRIM(LOWER(ProductView.custom_labels.label_4)) NOT IN UNNEST(neg_custom_label4)
-          AND TRIM(LOWER(ProductView.product_type_l1)) NOT IN UNNEST(neg_product_type_l1)
-          AND TRIM(LOWER(ProductView.product_type_l2)) NOT IN UNNEST(neg_product_type_l2)
-          AND TRIM(LOWER(ProductView.product_type_l3)) NOT IN UNNEST(neg_product_type_l3)
-          AND TRIM(LOWER(ProductView.product_type_l4)) NOT IN UNNEST(neg_product_type_l4)
-          AND TRIM(LOWER(ProductView.product_type_l5)) NOT IN UNNEST(neg_product_type_l5)
-          AND TRIM(LOWER(ProductView.google_product_category_l1))
-            NOT IN UNNEST(neg_google_product_category_l1)
-          AND TRIM(LOWER(ProductView.google_product_category_l2))
-            NOT IN UNNEST(neg_google_product_category_l2)
-          AND TRIM(LOWER(ProductView.google_product_category_l3))
-            NOT IN UNNEST(neg_google_product_category_l3)
-          AND TRIM(LOWER(ProductView.google_product_category_l4))
-            NOT IN UNNEST(neg_google_product_category_l4)
-          AND TRIM(LOWER(ProductView.google_product_category_l5))
-            NOT IN UNNEST(neg_google_product_category_l5)
-          AND TRIM(LOWER(ProductView.brand)) NOT IN UNNEST(neg_brand)
-          AND TRIM(LOWER(ProductView.channel)) NOT IN UNNEST(neg_channel)
-          AND TRIM(LOWER(ProductView.channel_exclusivity)) NOT IN UNNEST(neg_channel_exclusivity)
-          AND TRIM(LOWER(ProductView.condition)) NOT IN UNNEST(neg_condition)
+          AND (
+            ProductView.custom_labels.label_0 IS NULL
+            OR TRIM(LOWER(ProductView.custom_labels.label_0)) NOT IN UNNEST(neg_custom_label0))
+          AND (
+            ProductView.custom_labels.label_1 IS NULL
+            OR TRIM(LOWER(ProductView.custom_labels.label_1)) NOT IN UNNEST(neg_custom_label1))
+          AND (
+            ProductView.custom_labels.label_2 IS NULL
+            OR TRIM(LOWER(ProductView.custom_labels.label_2)) NOT IN UNNEST(neg_custom_label2))
+          AND (
+            ProductView.custom_labels.label_3 IS NULL
+            OR TRIM(LOWER(ProductView.custom_labels.label_3)) NOT IN UNNEST(neg_custom_label3))
+          AND (
+            ProductView.custom_labels.label_4 IS NULL
+            OR TRIM(LOWER(ProductView.custom_labels.label_4)) NOT IN UNNEST(neg_custom_label4))
+          AND (
+            ProductView.product_type_l1 IS NULL
+            OR TRIM(LOWER(ProductView.product_type_l1)) NOT IN UNNEST(neg_product_type_l1))
+          AND (
+            ProductView.product_type_l2 IS NULL
+            OR TRIM(LOWER(ProductView.product_type_l2)) NOT IN UNNEST(neg_product_type_l2))
+          AND (
+            ProductView.product_type_l3 IS NULL
+            OR TRIM(LOWER(ProductView.product_type_l3)) NOT IN UNNEST(neg_product_type_l3))
+          AND (
+            ProductView.product_type_l4 IS NULL
+            OR TRIM(LOWER(ProductView.product_type_l4)) NOT IN UNNEST(neg_product_type_l4))
+          AND (
+            ProductView.product_type_l5 IS NULL
+            OR TRIM(LOWER(ProductView.product_type_l5)) NOT IN UNNEST(neg_product_type_l5))
+          AND (
+            ProductView.google_product_category_l1 IS NULL
+            OR TRIM(LOWER(ProductView.google_product_category_l1))
+              NOT IN UNNEST(neg_google_product_category_l1))
+          AND (
+            ProductView.google_product_category_l2 IS NULL
+            OR TRIM(LOWER(ProductView.google_product_category_l2))
+              NOT IN UNNEST(neg_google_product_category_l2))
+          AND (
+            ProductView.google_product_category_l3 IS NULL
+            OR TRIM(LOWER(ProductView.google_product_category_l3))
+              NOT IN UNNEST(neg_google_product_category_l3))
+          AND (
+            ProductView.google_product_category_l4 IS NULL
+            OR TRIM(LOWER(ProductView.google_product_category_l4))
+              NOT IN UNNEST(neg_google_product_category_l4))
+          AND (
+            ProductView.google_product_category_l5 IS NULL
+            OR TRIM(LOWER(ProductView.google_product_category_l5))
+              NOT IN UNNEST(neg_google_product_category_l5))
+          AND (
+            ProductView.brand IS NULL
+            OR TRIM(LOWER(ProductView.brand)) NOT IN UNNEST(neg_brand))
+          AND (
+            ProductView.channel IS NULL
+            OR TRIM(LOWER(ProductView.channel)) NOT IN UNNEST(neg_channel))
+          AND (
+            ProductView.channel_exclusivity IS NULL
+            OR TRIM(LOWER(ProductView.channel_exclusivity)) NOT IN UNNEST(neg_channel_exclusivity))
+          AND (
+            ProductView.condition IS NULL
+            OR TRIM(LOWER(ProductView.condition)) NOT IN UNNEST(neg_condition))
       WHERE
         Criteria.offer_id IS NULL
+    ),
+    TargetedProducts AS (
+      SELECT
+        _DATA_DATE,
+        _LATEST_DATE,
+        product_id,
+        merchant_id,
+        target_country
+      FROM
+        IdTargeted
+      UNION ALL
+      SELECT
+        _DATA_DATE,
+        _LATEST_DATE,
+        product_id,
+        merchant_id,
+        target_country
+      FROM
+        NonIdTargeted
     )
-  SELECT
-    _DATA_DATE,
-    _LATEST_DATE,
-    product_id,
-    merchant_id,
-    target_country
+  SELECT DISTINCT
+    *
   FROM
-    IdTargeted
-  UNION ALL
-  SELECT
-    _DATA_DATE,
-    _LATEST_DATE,
-    product_id,
-    merchant_id,
-    target_country
-  FROM
-    NonIdTargeted
+    TargetedProducts
 );
