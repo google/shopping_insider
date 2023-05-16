@@ -176,8 +176,6 @@ AS (
     # Get merchant id.
     Merchants AS (
       SELECT DISTINCT
-        _DATA_DATE,
-        _LATEST_DATE,
         ShoppingProductStats.campaign_id,
         ShoppingProductStats.segments_product_merchant_id AS merchant_id,
         GeoTargets.country_code AS target_country
@@ -358,5 +356,5 @@ AS (
     *
   FROM Criteria
   INNER JOIN Merchants
-    USING (_DATA_DATE, _LATEST_DATE, campaign_id)
+    USING (campaign_id)
 );
