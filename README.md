@@ -130,7 +130,7 @@ editor window.
 
 To install **Shopping Insider**:
 1. Switch to sheet `Shopping Insider` and input required information in the
- sheet;
+ sheet, including `GMC Account Id`, `Google Ads MCC` and `Project Id`;
 1. Click menu `🤖 Cyborg` -> `Shopping Insider` -> `Check resources` to run
 a check. If an error happened, fix it and retry `Check resources`;
 1. If there are resources marked as `TO_APPLY`, use menu `🤖 Cyborg` ->
@@ -151,8 +151,6 @@ make a copy. You need to confirm and save the dashboard in the opened window.
 > location of a new BigQuery dataset. Cyborg will pause there and ask you to
 > select a location and click menu `Apply Changes` as a confirmation.
 
-
-Following are
 
 ### 2.2.2.2. Sheet `Shopping Insider`
 
