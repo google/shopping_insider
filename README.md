@@ -90,9 +90,80 @@ Make sure the user running the installation has following permissions.
 
 ### 2.2. Option 1: Install via Cyborg(Google Sheet)
 
-Make a copy of this
-[Google Sheet](https://docs.google.com/spreadsheets/d/1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas/edit#gid=151491750).
-Follows the instructions in the Google Sheet to complete the installation.
+#### 2.2.1. Prepare the tool
+
+#### 2.2.1.1. Make a copy of the tool
+
+1.  Join the [Google Group][group] group and wait for approval.
+1.  After you join the group, you can visit the [Google Sheets tool][cyborg]
+and make a copy.
+
+[group]: https://groups.google.com/g/shopping-insider-public
+[cyborg]: https://docs.google.com/spreadsheets/d/1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas/edit#gid=151491750
+
+#### 2.2.1.2. Configure the OAuth consent screen
+If there is no OAuth consent screen in this GCP project, you need to
+[configure the OAuth consent screen][oauth_consent] first. When you create the
+consent screen, some settings need to be:
+
+1. `Publishing status` as `In production`, otherwise the refresh token will
+expire every 7 days.
+1. `User type` could be `External` or check [User type][user_type] for more details.
+1. No `scopes` need to be filled in.
+
+[oauth_consent]: https://developers.google.com/workspace/guides/configure-oauth-consent
+[user_type]: https://support.google.com/cloud/answer/10311615?hl=en#zippy=%2Cexternal%2Cinternal
+
+#### 2.2.1.3. Update GCP project number to your Google Sheet
+
+1. Get your GCP project number. See how to
+[determine the project number of a standard Cloud project][project_number].
+1. Click Google Sheets menu `Extensions` -> `Apps Script` to open Apps Script
+editor window.
+2. On the Apps Script window, click `⚙️` (Project Settings) at the left menu bar,
+  then click the button `Change project`.
+1. Enter the project number and click the button `Set project`.
+
+[project_number]: https://developers.google.com/apps-script/guides/cloud-platform-projects#determine_the_id_number_of_a_standard
+
+#### 2.2.2. Use the tool
+
+To install **Shopping Insider**:
+1. Switch to sheet `Shopping Insider` and input required information in the
+ sheet;
+1. Click menu `🤖 Cyborg` -> `Shopping Insider` -> `Check resources` to run
+a check. If an error happened, fix it and retry `Check resources`;
+1. If there are resources marked as `TO_APPLY`, use menu `🤖 Cyborg` ->
+`Shopping Insider` -> `Apply changes` to apply the modifications;
+1. If ther are resources not checked, continue to step 2.
+1. After all resources are marked as `OK`, click the Dashboard Template link to
+make a copy. You need to confirm and save the dashboard in the opened window.
+
+> Note: When you first time click the menu item, an OAuth authorization window
+> may prompt you to grant permissions. After you complete it, you
+> need to click the menu item again to continue.
+
+> Note: Some processes, e.g. waiting for a newly created Data Transfer to finish
+> the first run takes time. If there was a timeout, then wait sometime and come
+> back retry `Check Resources`.
+
+> Why `TO_APPLY`? Some operations require input from the users, for example, the
+> location of a new BigQuery dataset. Cyborg will pause there and ask you to
+> select a location and click menu `Apply Changes` as a confirmation.
+
+
+Following are
+
+### 2.2.2.2. Sheet `Shopping Insider`
+
+This sheet contains a list of Cloud resources that will be operated during
+installation. You do not need to edit most of them except:
+1. Yellow background fields that need user input or confirm, including
+`GMC Account Id`, `Google Ads MCC` and `Project Id`.
+<!-- 1. In the feature, tick checkboxes to select `features` that you are going to
+enable, e.g. `Market Insight`. -->
+
+### 2.2.2.3. Menu `🤖 Cyborg` -> `Shopping Insider`
 
 ### 2.3. Option 2: Install via Shell Script(command line)
 
