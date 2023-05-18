@@ -15,9 +15,8 @@ ads performance.
     *   [1.3. Solution Options](#13-solution-options)
 *   [2. Installation](#2-installation)
     *   [2.1. Environment Setup](#21-environment-setup)
-    *   [2.2. Option 1: Install via Cyborg(Google Sheet)](#22-option-1-install-via-cyborggoogle-sheet)
-    *   [2.3. Option 2: Install via Shell Script(command line)](#23-option-2-install-via-shell-scriptcommand-line)
-    *   [2.4. Multi-Client Account(MCA) support](#24-multi-client-accountmca-support)
+    *   [2.2. Installation Options](#22-installation-options)
+    *   [2.3. Multiple Multi-Client Account(MCA) support](#23-multiple-multi-client-accountmca-support)
 
 ## 1. Overview
 
@@ -88,84 +87,109 @@ Make sure the user running the installation has following permissions.
 
 *   [Editor(or Owner) Role in Google Cloud Project](https://cloud.google.com/iam/docs/understanding-roles)
 
-### 2.2. Option 1: Install via Cyborg(Google Sheet)
+### 2.2. Installation Options
 
-#### 2.2.1. Prepare the tool
+There are two ways you can install Shopping Insider:
 
-#### 2.2.1.1. Make a copy of the tool
+[**Option 1:**](#221-option-1-install-via-cyborggoogle-sheet) Install via Cyborg
+(Google Sheet), if you are not comfortable with Command Line Interface (CLI) and
+want a clear view of any failed component install, if any.
+
+*   **Pros:** Fast and easy to deploy. Displays what happens when Shopping
+    Insider was installed and keeps a record of all kinds of GCP resources that
+    were enabled, checked, created or updated. It’s easy to upgrade to a new
+    version, e.g. the sql files are always downloaded from GitHub for the latest
+    version. When there are optional features, Cyborg offers a way to easily
+    reconfigure the features of the solution.
+
+*   **Cons:** The user who makes the copy of Cyborg should belong to the same
+    org which owns the GCP or have a Google Account, as they need to be able to
+    change AppScript project number.
+
+[**Option 2:**](#222-option-2-install-via-shell-scriptcommand-line) Install via
+Shell script, if you are comfortable with Command Line Interface (CLI) and need
+more details into what is getting installed beforehand.
+
+*   **Pros:** will support any client GCP structure
+
+*   **Cons:** longer and more technical to deploy than via Cyborg
+
+#### 2.2.1. Option 1: Install via Cyborg(Google Sheet)
+
+##### 2.2.1.1. Make a copy of the tool
 
 1.  Join the [Google Group][group] group and wait for approval.
-1.  After you join the group, you can visit the [Google Sheets tool][cyborg]
-and make a copy.
+1.  After you join the group, you can visit the [Google Sheets tool][cyborg] and
+    make a copy.
 
 [group]: https://groups.google.com/g/shopping-insider-public
 [cyborg]: https://docs.google.com/spreadsheets/d/1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas/edit#gid=151491750
 
-#### 2.2.1.2. Configure the OAuth consent screen
+##### 2.2.1.2. Configure the OAuth consent screen
+
 If there is no OAuth consent screen in this GCP project, you need to
 [configure the OAuth consent screen][oauth_consent] first. When you create the
 consent screen, some settings need to be:
 
-1. `Publishing status` as `In production`, otherwise the refresh token will
-expire every 7 days.
-1. `User type` could be `External` or check [User type][user_type] for more details.
-1. No `scopes` need to be filled in.
+1.  `Publishing status` as `In production`, otherwise the refresh token will
+    expire every 7 days.
+1.  `User type` could be `External` or check [User type][user_type] for more
+    details.
+1.  No `scopes` need to be filled in.
 
 [oauth_consent]: https://developers.google.com/workspace/guides/configure-oauth-consent
 [user_type]: https://support.google.com/cloud/answer/10311615?hl=en#zippy=%2Cexternal%2Cinternal
 
-#### 2.2.1.3. Update GCP project number to your Google Sheet
+##### 2.2.1.3. Update GCP project number to your Google Sheet
 
-1. Get your GCP project number. See how to
-[determine the project number of a standard Cloud project][project_number].
-1. Click Google Sheets menu `Extensions` -> `Apps Script` to open Apps Script
-editor window.
-2. On the Apps Script window, click `⚙️` (Project Settings) at the left menu bar,
-  then click the button `Change project`.
-1. Enter the project number and click the button `Set project`.
+1.  Get your GCP project number. See how to
+    [determine the project number of a standard Cloud project][project_number].
+1.  Click Google Sheets menu `Extensions` -> `Apps Script` to open Apps Script
+    editor window.
+1.  On the Apps Script window, click `⚙️` (Project Settings) at the left menu
+    bar, then click the button `Change project`.
+1.  Enter the project number and click the button `Set project`.
 
 [project_number]: https://developers.google.com/apps-script/guides/cloud-platform-projects#determine_the_id_number_of_a_standard
 
-#### 2.2.2. Use the tool
+##### 2.2.1.4. Deploy Shopping Insider
 
 To install **Shopping Insider**:
-1. Switch to sheet `Shopping Insider` and input required information in the
- sheet, including `GMC Account Id`, `Google Ads MCC` and `Project Id`;
-1. Click menu `🤖 Cyborg` -> `Shopping Insider` -> `Check resources` to run
-a check. If an error happened, fix it and retry `Check resources`;
-1. If there are resources marked as `TO_APPLY`, use menu `🤖 Cyborg` ->
-`Shopping Insider` -> `Apply changes` to apply the modifications;
-1. If ther are resources not checked, continue to step 2.
-1. After all resources are marked as `OK`, click the Dashboard Template link to
-make a copy. You need to confirm and save the dashboard in the opened window.
+
+1.  Switch to sheet `Shopping Insider` and input required information in the
+    sheet, including `GMC Account Id`, `Google Ads MCC` and `Project Id`.
+1.  Click menu `🤖 Cyborg` -> `Shopping Insider` -> `Check resources` to run a
+    check. If an error happened, fix it and retry `Check resources`.
+1.  If there are resources marked as `TO_APPLY`, use menu `🤖 Cyborg` ->
+    `Shopping Insider` -> `Apply changes` to apply the modifications.
+1.  If there are resources not checked, continue to step 2.
+1.  After all resources are marked as `OK`, click the Dashboard Template link to
+    make a copy. You need to confirm and save the dashboard in the opened
+    window.
 
 > Note: When you first time click the menu item, an OAuth authorization window
-> may prompt you to grant permissions. After you complete it, you
-> need to click the menu item again to continue.
+> may prompt you to grant permissions. After you complete it, you need to click
+> the menu item again to continue.
 
 > Note: Some processes, e.g. waiting for a newly created Data Transfer to finish
 > the first run takes time. If there was a timeout, then wait sometime and come
 > back retry `Check Resources`.
 
-> Why `TO_APPLY`? Some operations require input from the users, for example, the
+> Note: Why `TO_APPLY`? Some operations required user inputs, for example, the
 > location of a new BigQuery dataset. Cyborg will pause there and ask you to
 > select a location and click menu `Apply Changes` as a confirmation.
 
-
-### 2.2.2.2. Sheet `Shopping Insider`
+##### 2.2.1.5. Sheet `Shopping Insider`
 
 This sheet contains a list of Cloud resources that will be operated during
-installation. You do not need to edit most of them except:
-1. Yellow background fields that need user input or confirm, including
-`GMC Account Id`, `Google Ads MCC` and `Project Id`.
-<!-- 1. In the feature, tick checkboxes to select `features` that you are going to
-enable, e.g. `Market Insight`. -->
+installation. You do not need to edit most of them except: 1. Yellow background
+fields that need user input or confirm, including `GMC Account Id`, `Google Ads
+MCC` and `Project Id`.
+<!-- 1. In the feature, tick checkboxes to select `features` that you are going to enable, e.g. `Market Insight`. -->
 
-### 2.2.2.3. Menu `🤖 Cyborg` -> `Shopping Insider`
+#### 2.2.2. Option 2: Install via Shell Script(command line)
 
-### 2.3. Option 2: Install via Shell Script(command line)
-
-#### 2.3.1 Setup local environment.
+##### 2.2.2.1. Setup local environment.
 
 [Download and authenticate gcloud.](https://cloud.google.com/sdk/#Quick_Start)
 
@@ -175,7 +199,7 @@ comes with gcloud already installed. The cloud shell disconnects after 1 hour
 and hence we recommend using local environment for large accounts since they
 could take more than 1 hour to finish the installation.
 
-#### 2.3.2 Check out source codes
+##### 2.2.2.2. Check out source codes
 
 Open the [cloud shell](https://ssh.cloud.google.com/cloudshell?shellonly=true)
 or your terminal(if running locally) and clone the repository.
@@ -184,7 +208,7 @@ or your terminal(if running locally) and clone the repository.
   git clone https://github.com/google/shopping_insider
 ```
 
-#### 2.3.3 Run install script
+##### 2.2.2.3 Run install script
 
 Please provide following inputs when running the `setup.sh` script:
 
@@ -206,7 +230,7 @@ When installing, the script will check whether the current user has the proper
 authorization to continue. It may ask you to open cloud authorization URL in the
 browser. Please follow the instructions as mentioned in the command line.
 
-#### Note - If the script fails when you run it for the first time, it might be due to delay in preparing Merchant account data. Usually accounts with massive data set. Please wait up to 1-3 days before re-running the script.
+##### Note - If the script fails when you run it for the first time, it might be due to delay in preparing Merchant account data. Usually accounts with massive data set. Please wait up to 1-3 days before re-running the script.
 
 During the installation process, the script will do following:
 
@@ -230,7 +254,7 @@ During the installation process, the script will do following:
     *   product_historical_materialized - Historic snapshot of performance
         metrics at a product category level.
 
-#### 2.3.4 [Optional] Update location and locales if different than US
+##### 2.2.2.4. [Optional] Update location and locales if different than US
 
 *   If your data shouldn't be materialized in US, change the BigQuery dataset
     location in config.yaml
@@ -244,11 +268,11 @@ During the installation process, the script will do following:
     *   Check the scheduled queries in BigQuery and disable any older version of
         the Main Workflow
 
-#### 2.3.5 Configure Data Sources
+##### 2.2.2.5. Configure Data Sources
 
 You will need to create or copy required Data Source(s) in Data Studio:
 
-##### For Shopping Insider:
+###### For Shopping Insider:
 
 *   Create `product_detailed_materialized` Data Source (linked to
     `shopping_insider.product_detailed_materialized`)
@@ -288,9 +312,9 @@ To copy a data source:
 
 *   Repeat this process for all three data source templates above.
 
-#### 2.3.6 Create Data-Studio Dashboard(s)
+##### 2.2.2.6. Create Data-Studio Dashboard(s)
 
-##### For Shopping Insider:
+###### For Shopping Insider:
 
 *   Click on the following link to the Looker Studio template:
     [link](https://lookerstudio.google.com/c/u/0/reporting/f1859d41-b693-470c-a404-05c585f51f20/preview)
@@ -303,12 +327,12 @@ To copy a data source:
 
 *   Click "`Edit and share`"
 
-#### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
+##### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
 
-### 2.4. Multi-Client Account(MCA) support
+### 2.3. Multiple Multi-Client Account(MCA) support
 
 1.  If you have more than one Google Merchant Center, repeat the installation
-    for all MCA.
+    steps for all MCA.
 
 1.  Creates a data set in Big Query
     ([Guide](https://cloud.google.com/bigquery/docs/datasets#create-dataset)).
