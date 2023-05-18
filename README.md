@@ -179,14 +179,6 @@ To install **Shopping Insider**:
 > location of a new BigQuery dataset. Cyborg will pause there and ask you to
 > select a location and click menu `Apply Changes` as a confirmation.
 
-##### 2.2.1.5. Sheet `Shopping Insider`
-
-This sheet contains a list of Cloud resources that will be operated during
-installation. You do not need to edit most of them except: 1. Yellow background
-fields that need user input or confirm, including `GMC Account Id`, `Google Ads
-MCC` and `Project Id`.
-<!-- 1. In the feature, tick checkboxes to select `features` that you are going to enable, e.g. `Market Insight`. -->
-
 #### 2.2.2. Option 2: Install via Shell Script(command line)
 
 ##### 2.2.2.1. Setup local environment.
@@ -217,9 +209,6 @@ Please provide following inputs when running the `setup.sh` script:
 *   [Google Merchant Center Id](https://support.google.com/merchants/answer/188924?hl=en)
 
 *   [Google Ads External Customer Id](https://support.google.com/google-ads/answer/1704344?hl=en)
-
-*   Market Insights - whether to deploy Market Insights solution. Allowed
-    Values - True or False
 
 ```
 cd shopping-insider;
