@@ -10,18 +10,9 @@
   },
   "homepage": "https://github.com/google/shopping_insider/README.md",
   "dependencies": {
-    "@google-cloud/sheets-based-installer": "^0.1.0"
+    "@google-cloud/sheets-based-installer": "^0.2.0"
   },
   "devDependencies": {
-    "@google/clasp": "^2.4.2",
-    "jasmine": "^4.4.0"
-  },
-  "scripts": {
-    "deploy": "node node_modules/@google-cloud/sheets-based-installer/bin/deploy",
-    "postdeploy": "clasp push -f -P dest/apps_script"
-  },
-  "cloud-repo-tools": {
-    "requiresKeyFile": true,
-    "requiresProjectId": true
+    "@google/clasp": "^2.4.2"
   }
 }

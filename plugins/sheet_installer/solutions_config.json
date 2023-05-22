@@ -2,8 +2,10 @@
   "shopping": {
     "source": "./shopping-insider",
     "env": {
-      "dev": "[YOUR_APPS_SCRIPT_ID]",
-      "test": "[YOUR_APPS_SCRIPT_ID]"
+      "release": {
+        "parentId": "1pcB_JK5yZRxKCs4fLQY_KoQWUy5AEApAjt5Vy79uXas",
+        "scriptId": "1jXTr-_Y0Nm-SV0IHYlpXu2in4IUD-yEhJuV6QGK69ldC5Va2-CS6RfEd"
+      }
     }
   }
 }
