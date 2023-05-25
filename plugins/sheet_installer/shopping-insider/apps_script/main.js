@@ -155,7 +155,16 @@ const createBigQueryViews = (sql, resource) => {
  */
 const checkExpectedTables = (_, resource) => {
   const datasetId = getDocumentProperty('dataset');
-  return gcloud.checkExpectedTables(resource.attributeValue, datasetId);
+  const result = gcloud.checkExpectedTables(resource.attributeValue, datasetId);
+  if (result.status !== RESOURCE_STATUS.OK) {
+    return Object.assign({ value: 'Available after installation' }, result);
+  }
+  const dashboardLink = getDashboardCreateLink(
+    LOOKER_ID, LOOKER_DS_ALIASES, LOOKER_DS_PARAMETERS);
+  return Object.assign({
+    value: 'Click here to make a copy of the dashboard',
+    value_link: dashboardLink,
+  }, result);
 }
 
 /**
@@ -354,8 +363,7 @@ const SHOPPING_INSIDER_MOJO_CONFIG = {
       category: 'Solution',
       resource: 'Dashboard Template',
       editType: RESOURCE_EDIT_TYPE.READONLY,
-      value: 'Click here to make a copy of the dashboard',
-      value_link: getDashboardCreateLink(LOOKER_ID, LOOKER_DS_ALIASES, LOOKER_DS_PARAMETERS),
+      value: 'Available after installation',
       attributeName: 'Expected table(s)',
       attributeValue: 'product_detailed_materialized, product_historical_materialized',
       checkFn: checkExpectedTables,
