@@ -22,19 +22,36 @@ const SOURCE_REPO = 'https://raw.githubusercontent.com/google/shopping_insider/m
 /** Definitnion of the Looker dashboard. */
 /** @type {string} Looker dashboard Id. */
 const LOOKER_ID = 'f1859d41-b693-470c-a404-05c585f51f20';
-/** @type {!Array<string>} Data sources used in Looker dashboard. */
-const LOOKER_DS_ALIASES = ['product_detailed', 'product_historical'];
+/** @type {!Array<Object>} Data sources used in Looker dashboard. */
+const LOOKER_DATA_SOURCES = [
+  {
+    connector: 'bigQuery',
+    type: 'TABLE',
+    projectId: '${projectId}',
+    datasetId: '${dataset}',
+    keepDatasourceName: 'true',
+    aliases: {
+      product_detailed: { tableId: 'product_detailed_materialized' },
+      product_historical: { tableId: 'product_historical_materialized' },
+    },
+  },
+];
+
 /**
- * @type {Object} Parameters to create a copy of the Looker dashboard.
- * @see https://developers.google.com/looker-studio/integrate/linking-api#url_parameters
+ * The list of supported GMC DT BigQuery regions.
+ * @see https://cloud.google.com/bigquery/docs/locations
  */
-const LOOKER_DS_PARAMETERS = {
-  connector: 'bigQuery',
-  type: 'TABLE',
-  projectId: '${projectId}',
-  datasetId: '${dataset}',
-  tableId: ['product_detailed_materialized', 'product_historical_materialized'],
-};
+const GMC_BQ_DT_LOCATIONS = [
+  { displayName: 'United States', locationId: 'US' },
+  { displayName: 'European Union', locationId: 'EU' },
+  { displayName: 'Tokyo', locationId: 'asia-northeast1' },
+  { displayName: 'Singapore', locationId: 'asia-southeast1' },
+  { displayName: 'Sydney', locationId: 'australia-southeast1' },
+  { displayName: 'Finland', locationId: 'europe-north1' },
+  { displayName: 'London', locationId: 'europe-west2' },
+  { displayName: 'Zürich', locationId: 'europe-west6' },
+  { displayName: 'Northern Virginia', locationId: 'us-east4' },
+];
 
 /**
  * Creates or updates a data transfer configuration.
@@ -159,8 +176,7 @@ const checkExpectedTables = (_, resource) => {
   if (result.status !== RESOURCE_STATUS.OK) {
     return Object.assign({ value: 'Available after installation' }, result);
   }
-  const dashboardLink = getDashboardCreateLink(
-    LOOKER_ID, LOOKER_DS_ALIASES, LOOKER_DS_PARAMETERS);
+  const dashboardLink = getLookerCreateLink(LOOKER_ID, LOOKER_DATA_SOURCES);
   return Object.assign({
     value: 'Click here to make a copy of the dashboard',
     value_link: dashboardLink,
@@ -242,6 +258,7 @@ const SHOPPING_INSIDER_MOJO_CONFIG = {
     {
       template: 'bigQueryDataset',
       value: '${namespace}_dataset',
+      attributeValue_datarange: GMC_BQ_DT_LOCATIONS.map(getLocationListName),
       propertyName: 'dataset',
     },
     {
@@ -365,7 +382,7 @@ const SHOPPING_INSIDER_MOJO_CONFIG = {
       editType: RESOURCE_EDIT_TYPE.READONLY,
       value: 'Available after installation',
       attributeName: 'Expected table(s)',
-      attributeValue: 'product_detailed_materialized, product_historical_materialized',
+      attributeValue: getRequiredTablesForLooker(LOOKER_DATA_SOURCES),
       checkFn: checkExpectedTables,
     }
   ],
