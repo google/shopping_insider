@@ -16,7 +16,8 @@ ads performance.
 *   [2. Installation](#2-installation)
     *   [2.1. Environment Setup](#21-environment-setup)
     *   [2.2. Installation Options](#22-installation-options)
-    *   [2.3. Multiple Multi-Client Account(MCA) support](#23-multiple-multi-client-accountmca-support)
+    *   [2.3. Multiple Multi-Client Account(MCA) Support](#23-multiple-multi-client-accountmca-support)
+    *   [2.4. SA360 Support](#24-sa360-support)
 
 ## 1. Overview
 
@@ -318,7 +319,7 @@ To copy a data source:
 
 ##### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
 
-### 2.3. Multiple Multi-Client Account(MCA) support
+### 2.3. Multiple Multi-Client Account(MCA) Support
 
 1.  If you have more than one Google Merchant Center, repeat the installation
     steps for all MCA.
@@ -361,3 +362,15 @@ To copy a data source:
     ```
 
 1.  Replaces the dashboard data sources with the views.
+
+### 2.4. SA360 Support
+
+Shopping Insider aggregates information from both Google Ads and Merchant Center accounts. When
+you use SA360 and want to advertise on Google, you need to create a Google Ads account
+([source](https://support.google.com/searchads/answer/1717081?hl=en#link)).
+Those accounts are then synced together, so all the updates you do through SA360 are automatically
+reflected in Google Ads accounts.
+
+Shopping Insider, even though it is not taking any information directly from SA360, will accurately
+reflect the shopping campaigns status based on information coming from Google Ads accounts. **When you
+install Shopping Insider, provide your Google Ads account number, not your SA360 account number.**
