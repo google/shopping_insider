@@ -48,5 +48,3 @@ AS (
   GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 );
 END;
-
-CALL `{project_id}.{dataset}.product_historical_proc`();

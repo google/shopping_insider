@@ -126,6 +126,7 @@ def execute_queries(project_id: str, dataset_id: str, merchant_id: str,
       'sql/8_product_detailed_view.sql',
       'sql/9_materialize_product_detailed.sql',
       'sql/10_materialize_product_historical.sql',
+      _MAIN_WORKFLOW_SQL,
   ]
   if enable_market_insights:
     market_insights_sql_files = [

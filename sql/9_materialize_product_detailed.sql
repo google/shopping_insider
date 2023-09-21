@@ -40,5 +40,3 @@ AS (
 );
 
 END;
-
-CALL `{project_id}.{dataset}.product_detailed_proc`();
