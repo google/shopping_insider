@@ -10,7 +10,7 @@
   },
   "homepage": "https://github.com/google/shopping_insider/README.md",
   "dependencies": {
-    "@google-cloud/sheets-based-installer": "^1.0.0"
+    "@google-cloud/sheets-based-installer": "^1.1.0"
   },
   "devDependencies": {
     "@google/clasp": "^2.4.2"

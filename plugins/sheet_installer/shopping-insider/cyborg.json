@@ -1,6 +1,7 @@
 {
   "includes":[
     "mojo_sheet.js",
-    "gcloud.js"
+    "gcloud.js",
+    "explicit_auth.js"
   ]
 }

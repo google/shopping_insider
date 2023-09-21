@@ -103,9 +103,8 @@ want a clear view of any failed component install, if any.
     version. When there are optional features, Cyborg offers a way to easily
     reconfigure the features of the solution.
 
-*   **Cons:** The user who makes the copy of Cyborg should belong to the same
-    org which owns the GCP or have a Google Account, as they need to be able to
-    change AppScript project number.
+*   **Cons:** Extra steps required if the user who makes the copy of Cyborg did
+    not belong to the org which owns the GCP, see [Create an Explicit Authorization](#2214-alternative-create-an-explicit-authorization).
 
 [**Option 2:**](#222-option-2-install-via-shell-scriptcommand-line) Install via
 Shell script, if you are comfortable with Command Line Interface (CLI) and need
@@ -153,7 +152,31 @@ consent screen, some settings need to be:
 
 [project_number]: https://developers.google.com/apps-script/guides/cloud-platform-projects#determine_the_id_number_of_a_standard
 
-##### 2.2.1.4. Deploy Shopping Insider
+> **NOTE:** If you could not update the project number and got an error
+> saying `You cannot switch to a Cloud Platform project outside this script
+> owner's Cloud Organization`, you can set up an [Explicit Authorization](#2214-alternative-create-an-explicit-authorization) for
+> your copy of this tool.
+
+##### 2.2.1.4. (Alternative) Create an Explicit Authorization
+
+1. Prepare an OAuth Client by following [How to Create an OAuth 2.0 client ID][create_oauth_client].
+   Select the `Application type` as [`Desktop`][oauth_client_desktop].
+2. Click menu `🤖 Cyborg` -> `Explicit authorization`. This will open a
+   sidebar titled `Explicit Authorization`.
+3. In the `Create new explicit authorization` section, enter the
+   `OAuth client ID` and `client secret` that you created previously.
+4. Click the `Start` button and complete the OAuth confirmation process in the
+   newly opened tab and land on an error page _"This site can't be reached"_.
+   **This is an expected behaviour.**
+5. Copy the `url` of the error page and paste it back to the sidebar.
+6. `Cyborg` would complete the OAuth process and put a refresh token in the
+   `textarea` named `Generated OAuth token`.
+7. Click the button `Save as explicit authorization` and wait for it to complete.
+
+[create_oauth_client]: https://developers.google.com/workspace/guides/create-credentials#oauth-client-id
+[oauth_client_desktop]: https://support.google.com/cloud/answer/6158849?hl=en#zippy=%2Cnative-applications%2Cdesktop-apps
+
+##### 2.2.1.5. Deploy Shopping Insider
 
 To install **Shopping Insider**:
 
