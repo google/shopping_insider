@@ -37,6 +37,18 @@ const LOOKER_DATA_SOURCES = [
   },
 ];
 
+/** Tables will be transferred through Google Ads Data Transfer. */
+/** @type {!Array<string>} */
+const GOOGLE_ADS_TABLES = [
+  'Customer',
+  'Campaign',
+  'AdGroup',
+  'AdGroupCriterion',
+  'AssetGroup',
+  'AssetGroupListingGroupFilter',
+  'ShoppingProductStats',
+];
+
 /**
  * The list of supported GMC DT BigQuery regions.
  * @see https://cloud.google.com/bigquery/docs/locations
@@ -92,11 +104,12 @@ const createOrUpdateDataTransfer = (name, resource) => {
   } else if (name.startsWith('Google Ads Transfer')) {
     const customerId = getDocumentProperty('externalCustomerId');
     config.dataSourceId = DATA_TRANSFER_SOURCE.GOOGLE_ADS;
-    config.dataRefreshWindowDays = 1,
-      config.params = {
-        customer_id: customerId,
-        include_pmax: true,
-      };
+    config.dataRefreshWindowDays = 1;
+    config.params = {
+      table_filter: GOOGLE_ADS_TABLES.join(','),
+      customer_id: customerId,
+      include_pmax: true,
+    };
     filterFn = getFilterFn('customer_id');
   } else {
     return {
