@@ -38,6 +38,9 @@ _SUCCESS_STATE = 4
 _FAILED_STATE = 5
 _CANCELLED_STATE = 6
 
+_ADS_TABLES = ['Customer', 'Campaign', 'AdGroup', 'AdGroupCriterion',
+               'AssetGroup', 'AssetGroupListingGroupFilter', 'ShoppingProductStats',]
+
 
 class Error(Exception):
   """Base error for this module."""
@@ -285,6 +288,7 @@ class CloudDataTransferUtils(object):
     parameters = struct_pb2.Struct()
     parameters['customer_id'] = customer_id
     parameters['include_pmax'] = True
+    parameters['table_filter'] = ','.join(_ADS_TABLES)
     data_transfer_config = self._get_existing_transfer(_GOOGLE_ADS_ID,
                                                        destination_dataset,
                                                        parameters)
