@@ -262,16 +262,18 @@ const SHOPPING_INSIDER_MOJO_CONFIG = {
       checkFn: gcloud.checkOrEnableApi,
     },
     {
-      template: 'datasetRetention',
-      value: 60,
-      attributeName: 'Target',
-      attributeValue: 'Partition Table',
-      propertyName: 'partitionExpiration',
-    },
-    {
       template: 'bigQueryDataset',
       value: '${namespace}_dataset',
-      attributeValue_datarange: GMC_BQ_DT_LOCATIONS.map(getLocationListName),
+      attributes: [
+        {
+          attributeName: ATTRIBUTE_NAMES.bigquery.location,
+          attributeValue_datarange: GMC_BQ_DT_LOCATIONS.map(getLocationListName),
+        },
+        {
+          attributeName: ATTRIBUTE_NAMES.bigquery.partitionExpiration,
+          attributeValue: 60
+        }
+      ],
       propertyName: 'dataset',
     },
     {
