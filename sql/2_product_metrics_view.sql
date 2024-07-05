@@ -66,7 +66,7 @@ AS (
     GeoTargets.country_code AS target_country,
     SUM(ShoppingProductStats.impressions) AS impressions,
     SUM(ShoppingProductStats.clicks) AS clicks,
-    SUM(ShoppingProductStats.cost) AS cost,
+    SAFE_DIVIDE(SUM(ShoppingProductStats.cost), 1e6) AS cost,
     SUM(ShoppingProductStats.conversions) AS conversions,
     SUM(ShoppingProductStats.conversions_value) AS conversions_value
   FROM
