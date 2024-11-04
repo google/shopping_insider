@@ -81,23 +81,23 @@ AS (
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_type_value)),
           NULL) AS product_type_l5,
         IF(
-          asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL1',
+          asset_group_listing_group_filter_case_value_product_category_level = 'LEVEL1',
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l1,
         IF(
-          asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL2',
+          asset_group_listing_group_filter_case_value_product_category_level = 'LEVEL2',
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l2,
         IF(
-          asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL3',
+          asset_group_listing_group_filter_case_value_product_category_level = 'LEVEL3',
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l3,
         IF(
-          asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL4',
+          asset_group_listing_group_filter_case_value_product_category_level = 'LEVEL4',
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l4,
         IF(
-          asset_group_listing_group_filter_case_value_product_bidding_category_level = 'LEVEL5',
+          asset_group_listing_group_filter_case_value_product_category_level = 'LEVEL5',
           TRIM(LOWER(asset_group_listing_group_filter_case_value_product_bidding_category_id)),
           NULL) AS google_product_category_l5,
         IF(
