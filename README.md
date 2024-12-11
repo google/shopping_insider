@@ -48,7 +48,11 @@ Project on a daily basis and provide insights via Looker Studio dashboard.
 
 Please join this
 [Google Group](https://groups.google.com/g/shopping-insider-public) to gain the
-viewer access for some of the resources below. (i.e. templates, spreadsheets)
+viewer access for some of the resources below. (i.e. templates, spreadsheets).
+
+Once you click on the 'Join group' button you will *automatically* have immediate access to both templates (ie. there is no need to request access).
+
+<img src="images/access.png">
 
 #### Shopping Insider
 
@@ -57,9 +61,26 @@ tables available via the Merchant Center Transfer. This will allow you to set up
 the
 [Shopping Insider Dashboard Template](https://lookerstudio.google.com/c/u/0/reporting/f1859d41-b693-470c-a404-05c585f51f20/preview).
 
-#### Shopping Insider + Market Insights [Work In Progress]
+#### Markup + Market Insights
 
-Stay tune for the updates!
+By enabling Market Insights during the installation process, this will
+additionally configure the Market Insights tables available via the Merchant
+Center Transfer, Price Competitiveness & Best Sellers, as well as three additional
+BigQuery views:
+
+*   `market_insights_snapshot` - a snapshot view that joins the latest product
+    feed data with available price benchmarks, best seller status, and Google
+    Ads performance over the last 30 days.
+*   `market_insights_historical` - a date partitioned view that joins the latest
+    product feed data with historical price, price benchmarks, and Google Ads
+    performance over the entire transfer data set.
+*   `market_insights_best_sellers` - a view that joins the latest Best Sellers
+    Top Products table with inventory status to show a ranked list of Top
+    Products broken out by category.
+
+With these additional views, you will be able to set up the
+[Merchant Market Insights Dashboard Template](https://datastudio.google.com/reporting/37411ae9-b5f3-4062-89ea-ea521c885c30/page/QK7kB/preview)
+in addition to the above Markup Dashboard template.
 
 ## 2. Installation
 
@@ -234,9 +255,12 @@ Please provide following inputs when running the `setup.sh` script:
 
 *   [Google Ads External Customer Id](https://support.google.com/google-ads/answer/1704344?hl=en)
 
+*   Market Insights - whether to deploy Market Insights solution. Allowed
+    Values - True or False
+
 ```
 cd shopping-insider;
-sh setup.sh --project_id=<project_id> --merchant_id=<merchant_id> --ads_customer_id=<ads_customer_id>
+sh setup.sh --project_id=<project_id> --merchant_id=<merchant_id> --ads_customer_id=<ads_customer_id> --market_insights=<True/False>
 ```
 
 When installing, the script will check whether the current user has the proper
@@ -309,6 +333,18 @@ To create a data source:
 *   Click `Connect` on the top right corner and wait for the data-source to be
     created
 
+### For Merchant Market Insights:
+
+*   Copy
+    [Market Insights Snapshot (TEMPLATE)](https://datastudio.google.com/datasources/9dbdb290-0ea6-4d81-90df-5e4f9ec6f504)
+    and connect it to `markup.market_insights_snapshot_view`
+*   Copy
+    [Market Insights Historical (TEMPLATE)](https://datastudio.google.com/datasources/0397b27f-96b8-44cd-afca-645f64882a26)
+    and connect it to `markup.market_insights_historical_view`
+*   Copy
+    [Market Insights Best Sellers (TEMPLATE)](https://datastudio.google.com/datasources/b2f5bafe-01e2-4e30-bfb3-022a6c2f3ad6)
+    and connect it to `markup.market_insights_best_sellers_materialized`
+
 To copy a data source:
 
 *   Click on the data source template link above.
@@ -339,6 +375,17 @@ To copy a data source:
     step
 
 *   Click "`Edit and share`"
+
+### For Merchant Market Insights:
+
+*   Click on the following link to the Data Studio template:
+    [link](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview)
+
+*   Click "`Use Template`"
+
+*   Choose the three data-sources copied in the previous step
+
+*   Click "`Copy Report`"
 
 ##### Note - The performance metrics in the dashboard might take 12-24 hours to appear.
 

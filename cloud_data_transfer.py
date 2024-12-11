@@ -228,8 +228,8 @@ class CloudDataTransferUtils(object):
     parameters['merchant_id'] = merchant_id
     parameters['export_products'] = True
     if enable_market_insights:
-      parameters['export_price_benchmarks'] = True
-      parameters['export_best_sellers'] = True
+      parameters['export_price_competitiveness'] = True
+      parameters['export_best_sellers_v2'] = True
     data_transfer_config = self._get_existing_transfer(_MERCHANT_CENTER_ID,
                                                        destination_dataset,
                                                        parameters)

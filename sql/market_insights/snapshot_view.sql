@@ -19,55 +19,65 @@ AS (
   WITH
     BestSellers AS (
       SELECT DISTINCT
-        _PARTITIONDATE AS _DATA_DATE,
-        CONCAT(CAST(merchant_id AS STRING), '|', product_id) AS unique_product_id,
-        SPLIT(rank_id, ':')[SAFE_ORDINAL(2)] AS target_country,
+        _PARTITIONDATE AS data_date,
+        entity_id,
+        country_code AS target_country,
         TRUE AS is_best_seller,
       FROM
-        `{project_id}.{dataset}.BestSellers_TopProducts_Inventory_{merchant_id}`
+        `{project_id}.{dataset}.BestSellersProductClusterWeekly_{merchant_id}`
           AS BestSellers
     ),
     Products AS (
       SELECT
-        *,
+        * EXCEPT (_DATA_DATE, _LATEST_DATE),
+        _DATA_DATE AS data_date,
+        _LATEST_DATE AS latest_date,
         IF(
           sale_price_effective_start_date <= CURRENT_TIMESTAMP()
             AND sale_price_effective_end_date > CURRENT_TIMESTAMP(),
           sale_price.value,
-          price.value) AS effective_price
+          price.value) AS effective_price,
+        SPLIT(unique_product_id, '|')[1] AS product_id
       FROM
         `{project_id}.{dataset}.product_detailed_materialized`
     ),
     PriceBenchmarks AS (
       SELECT
-        _PARTITIONDATE AS _DATA_DATE,
-        CONCAT(CAST(merchant_id AS STRING), '|', product_id) AS unique_product_id,
-        country_of_sale AS target_country,
-        price_benchmark_value,
-        price_benchmark_currency,
-        price_benchmark_timestamp
+        _PARTITIONDATE AS data_date,
+        CONCAT(CAST(merchant_id AS STRING), '|', id) AS unique_product_id,
+        report_country_code AS target_country,
+        benchmark_price.amount_micros / 1000000 AS price_benchmark_value,
+        benchmark_price.currency_code AS price_benchmark_currency,
+        NULL AS price_benchmark_timestamp
       FROM
-        `{project_id}.{dataset}.Products_PriceBenchmarks_{merchant_id}`
+        `{project_id}.{dataset}.PriceCompetitiveness_{merchant_id}`
     )
   SELECT
-    Products.*,
-    IFNULL(BestSellers.is_best_seller, FALSE) AS is_best_seller,
-    PriceBenchmarks.price_benchmark_value,
-    PriceBenchmarks.price_benchmark_currency,
-    PriceBenchmarks.price_benchmark_timestamp,
-    CASE
-      WHEN PriceBenchmarks.price_benchmark_value IS NULL THEN ''
-      WHEN (PriceBenchmarks.price_benchmark_value - Products.effective_price) < 0
-        THEN 'Less than price benchmark'
-      WHEN (PriceBenchmarks.price_benchmark_value - Products.effective_price) > 0
-        THEN 'More than price benchmark'
-      ELSE 'Equal to price benchmark'
-      END AS price_competitiveness_band,
-    SAFE_DIVIDE(Products.effective_price, PriceBenchmarks.price_benchmark_value) - 1
-      AS price_vs_benchmark,
+    Products AS product,
+    BestSellers AS best_sellers,
+    STRUCT(
+      PriceBenchmarks.data_date,
+      PriceBenchmarks.unique_product_id,
+      PriceBenchmarks.target_country,
+      PriceBenchmarks.price_benchmark_value,
+      PriceBenchmarks.price_benchmark_currency,
+      PriceBenchmarks.price_benchmark_timestamp,
+      CASE
+        WHEN PriceBenchmarks.price_benchmark_value IS NULL THEN ''
+        WHEN (SAFE_DIVIDE(Products.effective_price, PriceBenchmarks.price_benchmark_value) - 1) < -0.01
+          THEN 'Less than PB'
+        WHEN (SAFE_DIVIDE(Products.effective_price, PriceBenchmarks.price_benchmark_value) - 1) > 0.01
+          THEN 'More than PB'
+        ELSE 'Equal to PB'
+        END AS price_competitiveness_band,
+      SAFE_DIVIDE(Products.effective_price, PriceBenchmarks.price_benchmark_value) - 1
+        AS price_vs_benchmark
+    ) AS price_benchmarks
   FROM Products
+  LEFT JOIN `{project_id}.{dataset}.BestSellersEntityProductMapping_{merchant_id}`
+    USING (product_id)
   LEFT JOIN BestSellers
-    USING (_DATA_DATE, unique_product_id, target_country)
+    USING (data_date, entity_id, target_country)
   LEFT JOIN PriceBenchmarks
-    USING (_DATA_DATE, unique_product_id, target_country)
+    USING (data_date, unique_product_id, target_country)
 );

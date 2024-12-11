@@ -32,14 +32,14 @@ CREATE OR REPLACE VIEW `{project_id}.{dataset}.market_insights_historical_view` 
           ELSE 'Equal to PB'
         END AS price_competitiveness_band,
         SAFE_DIVIDE(price, price_benchmark_value) - 1 AS price_vs_benchmark,
-        SAFE_DIVIDE(price, price_benchmark_value) - 1 AS sale_price_vs_benchmark,
+        SAFE_DIVIDE(sale_price, price_benchmark_value) - 1 AS sale_price_vs_benchmark,
       FROM (
         SELECT DISTINCT
-          _PARTITIONDATE as data_date,
+          _PARTITIONDATE AS data_date,
           CONCAT(CAST(merchant_id AS STRING), '|', product_id) AS unique_product_id,
           target_country,
           price.value AS price,
-          price.currency as price_currency,
+          price.currency AS price_currency,
           sale_price.value AS sale_price,
           sale_price.currency AS sale_price_currency,
         FROM `{project_id}.{dataset}.Products_{merchant_id}` AS Products,
@@ -48,13 +48,13 @@ CREATE OR REPLACE VIEW `{project_id}.{dataset}.market_insights_historical_view` 
       )
       LEFT JOIN (
         SELECT
-          _PARTITIONDATE as data_date,
-          CONCAT(CAST(merchant_id AS STRING), '|', product_id) AS unique_product_id,
-          country_of_sale as target_country,
-          price_benchmark_value,
-          price_benchmark_currency,
-          price_benchmark_timestamp
-        FROM `{project_id}.{dataset}.Products_PriceBenchmarks_{merchant_id}`
+          _PARTITIONDATE AS data_date,
+          CONCAT(CAST(merchant_id AS STRING), '|', id) AS unique_product_id,
+          report_country_code AS target_country,
+          benchmark_price.amount_micros / 1000000 AS price_benchmark_value,
+          benchmark_price.currency_code AS price_benchmark_currency,
+          _PARTITIONDATE AS price_benchmark_timestamp
+        FROM `{project_id}.{dataset}.PriceCompetitiveness_{merchant_id}`
       )
       USING (data_date, unique_product_id, target_country)
 )

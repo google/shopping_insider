@@ -13,65 +13,51 @@
 # limitations under the License.
 
 CREATE OR REPLACE TABLE `{project_id}.{dataset}.market_insights_best_sellers_materialized` AS (
-  WITH
-    best_sellers AS (
-      SELECT
-        _PARTITIONDATE as data_date,
-        rank_id,
-        rank,
-        previous_rank,
-        ranking_country,
-        ranking_category,
-        ranking_category_path.name as ranking_category_path,
-        IF(
-          ARRAY_LENGTH(SPLIT(ranking_category_path.name, ' > ')) = 1,
-          ranking_category_path.name,
-          NULL
-        ) as ranking_category_name_l1,
-        IF(
-          ARRAY_LENGTH(SPLIT(ranking_category_path.name, ' > ')) = 2,
-          ranking_category_path.name,
-          NULL
-        ) as ranking_category_name_l2,
-        IF(
-          ARRAY_LENGTH(SPLIT(ranking_category_path.name, ' > ')) = 3,
-          ranking_category_path.name,
-          NULL
-        ) as ranking_category_name_l3,
-        (SELECT ANY_VALUE(name) FROM b.product_title) AS product_title,
-        gtins,
-        brand,
-        google_product_category_path.name as google_product_category_path,
-        google_product_category,
-        price_range.min,
-        price_range.max,
-        price_range.currency,
-      FROM
-        `{project_id}.{dataset}.BestSellers_TopProducts_{merchant_id}` b
-      JOIN b.google_product_category_path google_product_category_path
-      JOIN b.ranking_category_path ranking_category_path
-      JOIN b.product_title product_title
-      WHERE
-        _PARTITIONDATE = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
-        # Locale parameter from config.yaml
-        AND (product_title.locale = "{market_insights_locale}" OR product_title.locale IS NULL)
-        AND google_product_category_path.locale = "{market_insights_locale}"
-        AND ranking_category_path.locale  = "{market_insights_locale}"
-    ),
-    inventory AS (
-      SELECT DISTINCT
-        rank_id
-      FROM
-        `{project_id}.{dataset}.BestSellers_TopProducts_Inventory_{merchant_id}`
-      WHERE
-        _PARTITIONDATE = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
-    )
   SELECT
-    best_sellers.*,
-    IF(inventory.rank_id IS NULL, False, True) AS is_in_inventory,
+    _PARTITIONDATE AS data_date,
+    NULL AS rank_id,
+    rank,
+    previous_rank,
+    country_code AS ranking_country,
+    report_category_id AS ranking_category,
+    NULL AS ranking_category_path,
+    category_l1 AS ranking_category_name_l1,
+    category_l2 AS ranking_category_name_l2,
+    category_l3 AS ranking_category_name_l3,
+    title AS product_title,
+    SPLIT(variant_gtins, ' ') AS gtins,
+    brand,
+    CASE
+      WHEN
+        category_l5 != ""
+      THEN
+        category_l1 || " > " || category_l2 || " > " || category_l3 || " > " || category_l4 || " > " || category_l5
+      WHEN
+        category_l4 != ""
+      THEN
+        category_l1 || " > " || category_l2 || " > " || category_l3 || " > " || category_l4
+      WHEN
+        category_l3 != ""
+      THEN
+        category_l1 || " > " || category_l2 || " > " || category_l3
+      WHEN
+        category_l2 != ""
+      THEN
+        category_l1 || " > " || category_l2
+      WHEN
+        category_l1 != ""
+      THEN
+        category_l1
+      ELSE
+        NULL
+    END AS google_product_category_path,
+    report_category_id AS google_product_category,
+    NULL AS min,
+    NULL AS max,
+    NULL AS currency,
+    IF(product_inventory_status = "in_inventory", TRUE, FALSE) AS is_in_inventory
   FROM
-    best_sellers
-  LEFT JOIN
-    inventory
-  USING (rank_id)
+    `{project_id}.{dataset}.BestSellersProductClusterWeekly_{merchant_id}`
+  WHERE
+    _PARTITIONDATE = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 );
