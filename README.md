@@ -259,7 +259,7 @@ Please provide following inputs when running the `setup.sh` script:
     Values - True or False
 
 ```
-cd shopping-insider;
+cd shopping_insider;
 sh setup.sh --project_id=<project_id> --merchant_id=<merchant_id> --ads_customer_id=<ads_customer_id> --market_insights=<True/False>
 ```
 
@@ -291,13 +291,10 @@ During the installation process, the script will do following:
     *   product_historical_materialized - Historic snapshot of performance
         metrics at a product category level.
 
-##### 2.2.2.4. [Optional] Update location and locales if different than US
+##### 2.2.2.4. [Optional] Update location if different than US
 
 *   If your data shouldn't be materialized in US, change the BigQuery dataset
     location in config.yaml
-
-*   [Market Insights only] Adjust the locales in best_sellers_workflow.sql, by
-    default set to "en-US"
 
 *   You could make the changes before running the install script or after
 

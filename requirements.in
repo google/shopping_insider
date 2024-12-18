@@ -2,8 +2,8 @@ google-api-python-client
 google-auth
 google-cloud-bigquery
 google-cloud-bigquery-datatransfer
-grpcio
-grpcio-tools
+grpcio==1.59.5
+grpcio-tools==1.59.5
 pytz
 PyYAML
 requests
