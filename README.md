@@ -376,7 +376,7 @@ To copy a data source:
 ### For Merchant Market Insights:
 
 *   Click on the following link to the Data Studio template:
-    [link](https://datastudio.google.com/reporting/806b9d3e-073a-43c2-bba0-53a0eb65302f/page/QK7kB/preview)
+    [link](https://lookerstudio.google.com/c/u/0/reporting/eb48f0c9-6d04-48dc-bde5-7ba9fc65e450/preview)
 
 *   Click "`Use Template`"
 
